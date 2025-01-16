@@ -10,6 +10,47 @@ Starting with a text file containing eBird Hotspot (or region) IDs of interest a
 - Output an excel sheet of the Species x Hotspot table, color coded by frequency
 - Output a "Study Guide" for targets, just an HTML file with links to eBird species account pages
 
+## Details
+List of things that might be worth mentioning
+- password stuff
+- Parses anything that shows up on your eBird Lofe List, so both "Native & Naturalized" & 
+"Exotic: Provisional" species will be listed in the output.
+
+## Usage
+This script is run in the command line with the following command:
+```python3 targets_parser.py```
+
+All relevant parameters are passed to the script in a configuration file that must be named ```ebird.cfg```. The format for each parameter passed to the script is ```parameter = value```. The text to the left of the ```=``` should not be changed. See an example config file below, followed by a description of each parameter:
+
+```
+[ebird-config]
+user = YourUserName
+pw = YourPassword
+hotspots = hotspots.txt
+filebase = CostaRica
+bmo = 1
+emo = 1
+reg = world
+time = life
+cutoff = 1.5
+taxonomy = eBird-Clements-v2024-integrated-checklist-October-2024-rev.csv
+taxsort = sort v2024
+speccol = English name
+```
+
+```=```
+```=```
+```=```
+```=```
+```=```
+```=```
+```=```
+```=```
+```=```
+```=```
+```=```
+```=```
+
 ## Updates
 eBird's yearly taxonomy update will necessitate downloading the latest version of the Clements/eBird checklist, and changing a couple of lines in the configuration file. I won't host these here, but will try to keep these links up to date. 
 
@@ -17,15 +58,10 @@ The 2024 taxonomy downloads page, and a direct link to the relevant 2024 taxonom
 - https://www.birds.cornell.edu/clementschecklist/introduction/updateindex/october-2024/2024-citation-checklist-downloads/
 - https://www.birds.cornell.edu/clementschecklist/wp-content/uploads/2024/10/eBird-Clements-v2024-integrated-checklist-October-2024-rev.csv
 
-eBird website, and style updates will require more significant updates. eBird's 2024 style update required an update to the code that parses the targets table HTML. Hopefully, this will be stable for awhile.
-  
-## Details
-(Native & Naturalized & Exotic: Provisional)
-
-## Usage
+Updates to the eBird website will require more significant changes to the code. eBird's 2024 style update required rewriting the code that parses the targets table HTML. Hopefully, the current eBird style will be stable for awhile.
 
 ## Dependencies
-This script requires python3 with pandas, numpy, BeautifulSoup, requests, csv, and xlsxwriter. The versions I'm using are listed below, but it's unlikely that you will need the exact versions I'm using.
+This script requires python3 with pandas, numpy, BeautifulSoup, requests, csv, and xlsxwriter. The versions I'm using are listed below, but it's unlikely that you will need this exact configuration.
 - python3 [3.9.12]
 - pandas [1.4.2]
 - numpy [1.21.5]
