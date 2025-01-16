@@ -25,4 +25,11 @@ eBird website, and style updates will require more significant updates. eBird's 
 ## Usage
 
 ## Dependencies
-
+This script requires python3 with pandas, numpy, BeautifulSoup, requests, csv, and xlsxwriter. The versions I'm using are listed below, but it's unlikely that you will need the exact versions I'm using.
+- python3 [3.9.12]
+- pandas [1.4.2]
+- numpy [1.21.5]
+- bs4 [4.11.1]
+- requests [2.27.1]
+- csv [1.0]
+- xlsxwriter [3.0.3]
