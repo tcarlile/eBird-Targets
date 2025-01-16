@@ -13,6 +13,7 @@ Starting with a text file containing eBird Hotspot (or region) IDs of interest a
 ## Details
 List of things that might be worth mentioning
 - password stuff
+- Hotspot order These should be ordered in the order in which you would like them to app
 - Parses anything that shows up on your eBird Lofe List, so both "Native & Naturalized" & 
 "Exotic: Provisional" species will be listed in the output.
 
@@ -27,29 +28,40 @@ All relevant parameters are passed to the script in a configuration file that mu
 user = YourUserName
 pw = YourPassword
 hotspots = hotspots.txt
-filebase = CostaRica
+filebase = YourDestination
 bmo = 1
 emo = 1
 reg = world
-time = life
+list = life
 cutoff = 1.5
 taxonomy = eBird-Clements-v2024-integrated-checklist-October-2024-rev.csv
 taxsort = sort v2024
 speccol = English name
 ```
 
-```=```
-```=```
-```=```
-```=```
-```=```
-```=```
-```=```
-```=```
-```=```
-```=```
-```=```
-```=```
+- ```user = ``` Your eBird username
+- ```pw = ``` Your eBird password
+- ```hotspots = ``` A text file containing eBird hotspot IDs of interest. You can find the hotspot ID in the hotspot's eBird URL. For example the web address for Mount Auburn Cemetery is ```https://ebird.org/hotspot/L207391```, and the hotspot ID is ```L207391```. See an example file from my Costa Rica trip below.
+- ```filebase = ``` A prefix for the script's output files. For example, if you're preparing for a trip to Costa Rica you might use a prefix of ```CostaRica```
+- ```bmo = ``` The beginning month of your time period of interest. Acceptable vales are ```1-12```
+- ```emo = ``` The ending month of your time period of interest. Acceptable vales are ```1-12```
+- ```reg = ``` The region list you want targets for. ```world``` specifies targets for your world life list. Other options are the hotspot ID or region ID. 
+- ```list = ``` The list you want targets for:
+- ```cutoff = ```
+- ```taxonomy = ```
+- ```taxsort = ```
+- ```speccol = ```
+
+Hotspots file format:
+```
+L2284561
+L447854
+L7086691
+L487975
+L30207900
+L444121
+L448041
+```
 
 ## Updates
 eBird's yearly taxonomy update will necessitate downloading the latest version of the Clements/eBird checklist, and changing a couple of lines in the configuration file. I won't host these here, but will try to keep these links up to date. 
