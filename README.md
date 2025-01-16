@@ -10,12 +10,13 @@ Starting with a text file containing eBird Hotspot (or region) IDs of interest a
 - Output an excel sheet of the Species x Hotspot table, color coded by frequency
 - Output a "Study Guide" for targets, just an HTML file with links to eBird species account pages
 
-## Details
+## Details & Caveats
 List of things that might be worth mentioning
 - password stuff
 - Hotspot order These should be ordered in the order in which you would like them to app
 - Parses anything that shows up on your eBird Lofe List, so both "Native & Naturalized" & 
 "Exotic: Provisional" species will be listed in the output.
+- Rarities: long staying rarities can yield spurious targets. e.g. Surfbird south padre island (look up deets)
 
 ## Usage
 This script is run in the command line with the following command:
@@ -46,8 +47,8 @@ speccol = English name
 - ```bmo = ``` The beginning month of your time period of interest. Acceptable vales are ```1-12```
 - ```emo = ``` The ending month of your time period of interest. Acceptable vales are ```1-12```
 - ```reg = ``` The region list you want targets for. ```world``` specifies targets for your world life list. Other options are the hotspot ID or region ID. 
-- ```list = ``` The list you want targets for:
-- ```cutoff = ```
+- ```list = ``` The list you want targets for, options are: ```life```, ```year```, ```month```, ```day```	 
+- ```cutoff = ``` A percent cutoff for filtering data. A cutoff of ```1.5``` means that if a species doesn't have a frequency of >= 1.5% in at least one hotspot, it is filtered from the output data.
 - ```taxonomy = ```
 - ```taxsort = ```
 - ```speccol = ```
