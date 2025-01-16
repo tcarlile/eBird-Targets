@@ -11,17 +11,18 @@ Starting with a text file containing eBird Hotspot (or region) IDs of interest a
 - Output a "Study Guide" for targets, just an HTML file with links to eBird species account pages
 
 ## Updates
-eBird's yearly taxonomy update will necessitate downloading the latest version of the Clements/eBird checklist, and changing a couple of lines in the configuration file. The 2024 taxonomy downloads page, and a direct link to the relevant 2024 taxonomy file are below.
+eBird's yearly taxonomy update will necessitate downloading the latest version of the Clements/eBird checklist, and changing a couple of lines in the configuration file. I won't host these here, but will try to keep these links up to date. 
+
+The 2024 taxonomy downloads page, and a direct link to the relevant 2024 taxonomy file are below.
 - https://www.birds.cornell.edu/clementschecklist/introduction/updateindex/october-2024/2024-citation-checklist-downloads/
 - https://www.birds.cornell.edu/clementschecklist/wp-content/uploads/2024/10/eBird-Clements-v2024-integrated-checklist-October-2024-rev.csv
 
-eBird style updates will also require more significant updates in how the targets table HTML is parsed from the website. eBird's 2024 style update 
+eBird website, and style updates will require more significant updates. eBird's 2024 style update required an update to the code that parses the targets table HTML. Hopefully, this will be stable for awhile.
   
 ## Details
 (Native & Naturalized & Exotic: Provisional)
 
-eBird style update
-
 ## Usage
 
 ## Dependencies
+
