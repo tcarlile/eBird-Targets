@@ -1,4 +1,4 @@
-# eBird-Targets
+# 🐦 eBird-Targets 🐦
 The first version of this script was written to help prepare for an eleven day birding trip to South and West Texas. Several other birders had shared their eBird trip reports with me, which while incredibly helpful, were difficult to synthesize. This script was written to help create something digestible that would allow me 1) to find target species to study, 2) to help plan daily trip agendas, and 3) inform decision making on the fly in the field. A trip to Costa Rica prompted a rewrite to streamline the code and eliminate as many manual steps as possible.
 
 You'll need to do some research first. I can't automate that part! Primarily this is figuring out  hotspots that you're interested in visiting. The eBird hotspots map, and other birders are helpful for this bit. Once you have a list of hotspots, you're ready to go. The script will output a table with the frequencies of target species across your hotspots of interest.
@@ -26,15 +26,13 @@ Some important notes, caveats, and limitations:
 - Yes, the script reads your eBird password from the config file stored in plain text on your computer.
   - If you're paranoid you should remove it from ```ebird.cfg``` after running the script.
   - The password is stored in the ```cfg['pw']``` variable (see lines ```148, 142-143```, and is only sent to the eBird login page (see lines ```156-162```. I encourage you to examine the code before running.
-- Long staying and heavily twitched rarities 
-- You may need to do some Rarities: long staying rarities can yield spurious targets. e.g. Surfbird on south padre island (look up deets)
-- Things I haven't tested. If you do, please let me know:
-  - When eBird is set to display both common and scientific names. 
-  - I have not tested with Windows line endings, only Unix line endings.
+- Long staying and heavily twitched rarities can lead to spurious/unlikely targets. There were several of these for my Texas and Arizona trips. I suspect it's more of an issue in places that get tons of rarities. You may want to do a bit of data cleaning if something looks unlikely. 
+  - A Surbird seen on South Padre Island for ~1.5 weeks in April 2023 showed up with a 9.9% frequency in the output for my trip.
+  - One might also think that the seldom birded bike path near me would be a great place to see a wintertime Townsed's Warlber in the east (66%!).
+- There are some things I haven't tested. If you do, please let me know:
+  - HTML parsing when eBird is set to display both common and scientific names. 
+  - When config and hotspots files have Windows line endings.
 - Currently this only supports English Common names, because that's what's in the taxonomy file. If there are taxonomy files with names in other languages those may work.
-
-
-
 
 ## Usage
 This script is run in the terminal with the command ```python3 targets_parser.py```. It should be run in a directory containing an ```ebird.cfg``` file, a file of hotspots of interest, and the Clements/eBird taxonomy csv file (see below for details).
