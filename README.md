@@ -11,15 +11,29 @@ Starting with a text file containing eBird Hotspot (or region) IDs of interest a
 - Output a "Study Guide." At the moment, just an HTML file with links to eBird species accounts
 
 ## Details & Caveats
-List of things that might be worth mentioning
-- password stuff
-- Hotspot order These should be ordered in the order in which you would like them to app
-- Parses anything that shows up on your eBird Lofe List, so both "Native & Naturalized" & 
+A few notes about the output:
+- The script parses anything that shows up on your eBird life list, so both "Native & Naturalized" & 
 "Exotic: Provisional" species will be listed in the output.
-- Color key: gray < cutoff, red cutoff - 10%, yellow 10-25%, blue 25-50%, green >50%
+- The excel file contains a column of frequencies species at each hotspot, a ```Max Freq``` column containing the maximum frequency for each species across parsed hotspots, and a ```Tax Sort``` column that allows you to easily re-sort taxonomically if you play around with the data in excel.
+- The color code should be fairly intutive:
+  - Grey: < cutoff
+  - Red: cutoff - 10%
+  - Yellow: 10 - 25%
+  - Blue: 25 - 50%
+  - Green: >50%
+- The "Study Guide" is just an unformatted html file with a taxonomically sorted list of links to eBird species accounts. I'll probably get around to making this nicer looking at some point.
+  
+Some important notes, caveats, and limitations:
+- Yes, the script reads your eBird password from the config file stored in plain text on your computer.
+  - If you're paranoid you should remove it from ```ebird.cfg``` after running the script.
+  - The password is stored in the ```cfg['pw']``` variable (see lines ```148, 142-143```, and is only sent to the eBird login page (see lines ```156-162```. I encourage you to examine the code before running.
+- Things I haven't tested. If you do, please let me know:
+  - When eBird is set to display both common and scientific names. 
+  - I have not tested with Windows line endings, only Unix line endings.
+- Currently this only supports English Common names, because that's what's in the taxonomy file. If there are taxonomy files with names in other languages those may work.
 - Rarities: long staying rarities can yield spurious targets. e.g. Surfbird on south padre island (look up deets)
-- languages, only english at the moment
-- have not tested with windows line endings only linux/mac
+
+
 
 ## Usage
 This script is run in the terminal with the command ```python3 targets_parser.py```. It should be run in a directory containing an ```ebird.cfg``` file, a file of hotspots of interest, and the Clements/eBird taxonomy csv file (see below for details).
@@ -55,7 +69,7 @@ speccol = English name
 - ```taxsort = ``` The column header in the taxonomy csv file that specifies the taxonomic sort order (e.g. ```sort v2024```)
 - ```speccol = ``` The column header in the taxonomy csv file that specifies the species name (e.g. ```English name```)
 
-An example hotspots file from my Costa Rica trip. Each hotspot ID should be on its own line. The file can have any name that you want, as long as it's specified in the ```ebird.cfg``` file:
+An example hotspots file from my Costa Rica trip. Each hotspot ID should be on its own line. The  top to bottom order of hotspots specifies the left to right order of columns in the output spreadsheet. I typically used column ordering to group hotspots in some way that makes sense for the trip. The file can have any name that you want, as long as it's specified in the ```ebird.cfg``` file:
 ```
 L2284561
 L447854
