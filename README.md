@@ -26,12 +26,12 @@ Some important notes, caveats, and limitations:
 - The script reads your eBird password from the config file stored in plain text on your computer.
   - If you're paranoid you should remove the password from ```ebird.cfg``` after running the script.
   - The password is stored in the ```cfg['pw']``` variable (see lines and is only sent to the eBird login page (see lines ```148, 142-143, 156-162```. Examine the code before running.
-- Long staying and heavily twitched rarities can lead to spurious/unlikely targets. There were several of these for my Texas and Arizona trips. I suspect it's more of an issue in places that get tons of rarities. You may want to do a bit of data cleaning if something looks unlikely. 
-  - A Surbird seen on South Padre Island for ~1.5 weeks in April 2023 showed up with a 9.9% frequency in the output for my trip.
-  - One might also think that the seldom birded bike path near me would be a great place to see a wintertime Townsed's Warlber in the east (66%!).
+- Long staying and heavily twitched rarities can lead to spurious/unlikely targets. There were several of these for my Texas and Arizona trips. I suspect it's more of an issue in places that get tons of rarities. You may want to do a bit of data cleaning if something looks unlikely. Examples:
+  - A Surbird seen on South Padre Island for ~1.5 weeks in April 2023 showed up at ~9.9% frequency in the output for my Texas trip.
+  - One might also think that the seldom birded Boston Area bike path near me would be a great place to see a wintertime Townsed's Warlber (66.5%!).
 - There are some things I haven't tested. If you do, please let me know:
   - HTML parsing when eBird is set to display both common and scientific names. 
-  - When config and hotspots files have Windows line endings.
+  - When config and hotspots files have Windows line endings. I think pyhton3 handles this automatically, but I haven't explicitly tested.
 - Currently this only supports English Common names, because that's what's in the taxonomy file. If there are taxonomy files with names in other languages those may work.
 
 ## Usage
@@ -57,8 +57,8 @@ speccol = English name
 
 - ```user = ``` Your eBird username
 - ```pw = ``` Your eBird password
-- ```hotspots = ``` A text file containing eBird hotspot IDs of interest. You can find the hotspot ID in the hotspot's eBird URL. For example the web address for the Mount Auburn Cemetery hotspot is ```https://ebird.org/hotspot/L207391```, and the hotspot ID is ```L207391```. See an example file below.
-- ```filebase = ``` A prefix for the script's output files. For example, if you're preparing for a trip to Costa Rica you might use a prefix of ```CostaRica```
+- ```hotspots = ``` A text file containing eBird hotspot IDs of interest. You can find the hotspot ID in the hotspot's eBird URL. For example the URL for the Mount Auburn Cemetery hotspot is ```https://ebird.org/hotspot/L207391```. The hotspot ID is ```L207391```. See an example file below.
+- ```filebase = ``` A prefix for the script's output files. If you're preparing for a trip to Costa Rica you might use a prefix of ```CostaRica```I
 - ```bmo = ``` The beginning month of your time period of interest. Acceptable vales are ```1 - 12```
 - ```emo = ``` The ending month of your time period of interest. Acceptable vales are ```1 - 12```
 - ```reg = ``` The region list you want targets for. ```world``` specifies targets for your world life list. Other options are the hotspot ID or region ID. 
@@ -68,7 +68,7 @@ speccol = English name
 - ```taxsort = ``` The column header in the taxonomy csv file that specifies the taxonomic sort order (e.g. ```sort v2024```)
 - ```speccol = ``` The column header in the taxonomy csv file that specifies the species name (e.g. ```English name```)
 
-An example hotspots file from my Costa Rica trip. Each hotspot ID should be on its own line. The  top to bottom order of hotspots specifies the left to right order of columns in the output spreadsheet. I typically used column ordering to group hotspots in some way that makes sense for the trip. The file can have any name that you want, as long as it's specified in the ```ebird.cfg``` file:
+An example hotspots file from my Costa Rica trip. Each hotspot ID should be on its own line. The  top to bottom order of hotspots specifies the left to right order of columns in the output spreadsheet. I used colum ordering to organize in some way that makes sense for the trip. The file can have any name that you want, as long as it's specified in the ```ebird.cfg``` file:
 ```
 L2284561
 L447854
@@ -80,11 +80,11 @@ L448041
 ```
 
 ## Updates
-eBird's yearly taxonomy update will require downloading the latest version of the Clements/eBird checklist, and changing a couple of lines in the configuration file. I won't host these here, but will try to keep these links up to date.
+eBird's yearly taxonomy update will require downloading the latest version of the Clements/eBird checklist and changing a couple of lines in the cfg file. I won't host these here, but will try to keep these links up to date.
 
 The 2024 taxonomy downloads page, and a direct link to the relevant 2024 taxonomy file are below.
-- https://www.birds.cornell.edu/clementschecklist/introduction/updateindex/october-2024/2024-citation-checklist-downloads/
-- https://www.birds.cornell.edu/clementschecklist/wp-content/uploads/2024/10/eBird-Clements-v2024-integrated-checklist-October-2024-rev.csv
+- [2024 Taxonomy Download Page](https://www.birds.cornell.edu/clementschecklist/introduction/updateindex/october-2024/2024-citation-checklist-downloads/)
+- [2024 Clements/eBird csv](https://www.birds.cornell.edu/clementschecklist/wp-content/uploads/2024/10/eBird-Clements-v2024-integrated-checklist-October-2024-rev.csv)
 
 Updates to the eBird website will require more significant changes to the code. eBird's 2024 style update required rewriting the code to parse the targets table HTML. Hopefully, the current eBird style will be stable for awhile.
 
