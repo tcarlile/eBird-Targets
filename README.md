@@ -5,27 +5,27 @@ You'll need to do some research first. I can't automate that part! Primarily thi
 
 ## Highlights
 Starting with a text file containing eBird Hotspot (or region) IDs of interest and a configuration file, this script will: 
-- Logon to your eBird account, load the targets page for each hotspot, & parse the data table
-- Combine the hotspot targets tables into a taxonomically sorted Species x Hotspot table
+- Logon to your eBird account, load the targets page for each hotspot, & parse the targets data
+- Combine hotspot targets tables into a single taxonomically sorted Species x Hotspot table
 - Output an excel sheet with the Species x Hotspot table, color coded by frequency
-- Output a "Study Guide." At the moment, just an HTML file with links to eBird species accounts
+- Output a crude "Study Guide." At the moment, just an HTML file with links to eBird species accounts
 
 ## Details & Caveats
 A few notes about the output:
-- The script parses anything that shows up on your eBird life list, so both "Native & Naturalized" and "Exotic: Provisional" species will be listed in the output.
-- The excel file contains a column of frequencies species at each hotspot, a ```Max Freq``` column containing the maximum frequency for each species across parsed hotspots, and a ```Tax Sort``` column that allows you to easily re-sort taxonomically if you play around with the data in excel.
+- The script parses anything that shows up on your eBird life list, so both "Native & Naturalized" and "Exotic: Provisional" species are listed in the output.
+- The excel file contains a column of species frequencies for each hotspot, a ```Max Freq``` column with the maximum frequencies across parsed hotspots, and a ```Tax Sort``` column that allows you to easily re-sort taxonomically if you play around with the data.
 - The color code should be fairly intutive:
   - Grey: < cutoff
   - Red: cutoff - 10%
   - Yellow: 10 - 25%
   - Blue: 25 - 50%
   - Green: >50%
-- The "Study Guide" is just an unformatted html file with a taxonomically sorted list of links to eBird species accounts. I'll probably get around to making this nicer looking at some point.
+- The "Study Guide" is just an unformatted html file with a taxonomically sorted list of links to eBird species accounts.
   
 Some important notes, caveats, and limitations:
-- Yes, the script reads your eBird password from the config file stored in plain text on your computer.
-  - If you're paranoid you should remove it from ```ebird.cfg``` after running the script.
-  - The password is stored in the ```cfg['pw']``` variable (see lines ```148, 142-143```, and is only sent to the eBird login page (see lines ```156-162```. I encourage you to examine the code before running.
+- The script reads your eBird password from the config file stored in plain text on your computer.
+  - If you're paranoid you should remove the password from ```ebird.cfg``` after running the script.
+  - The password is stored in the ```cfg['pw']``` variable (see lines and is only sent to the eBird login page (see lines ```148, 142-143, 156-162```. Examine the code before running.
 - Long staying and heavily twitched rarities can lead to spurious/unlikely targets. There were several of these for my Texas and Arizona trips. I suspect it's more of an issue in places that get tons of rarities. You may want to do a bit of data cleaning if something looks unlikely. 
   - A Surbird seen on South Padre Island for ~1.5 weeks in April 2023 showed up with a 9.9% frequency in the output for my trip.
   - One might also think that the seldom birded bike path near me would be a great place to see a wintertime Townsed's Warlber in the east (66%!).
