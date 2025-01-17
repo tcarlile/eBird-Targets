@@ -86,7 +86,7 @@ The 2024 taxonomy downloads page, and a direct link to the relevant 2024 taxonom
 - [2024 Taxonomy Download Page](https://www.birds.cornell.edu/clementschecklist/introduction/updateindex/october-2024/2024-citation-checklist-downloads/)
 - [2024 Clements/eBird csv](https://www.birds.cornell.edu/clementschecklist/wp-content/uploads/2024/10/eBird-Clements-v2024-integrated-checklist-October-2024-rev.csv)
 
-Updates to the eBird website will require more significant changes to the code. eBird's 2024 style update required rewriting the code to parse the targets table HTML. Hopefully, the current eBird style will be stable for awhile.
+Updates to the eBird website will require more significant updates. eBird's 2024 style update required rewriting the code that parses the targets table HTML. Hopefully, the current eBird style will be stable for a few years.
 
 ## Dependencies
 This script requires python3 with pandas, numpy, BeautifulSoup, requests, csv, and xlsxwriter. The versions I'm using are listed below. It's unlikely that this exact configuration is needed, but earlier versions of *some* packages might not work.
