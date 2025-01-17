@@ -1,7 +1,7 @@
 # 🐦 eBird-Targets 🐦
-The first version of this script was written to help prepare for an eleven day birding trip to South and West Texas. Several other birders had shared their eBird trip reports with me, which while incredibly helpful, were difficult to synthesize. This script was written to help create something digestible that would allow me 1) to find target species to study, 2) to help plan daily trip agendas, and 3) inform decision making on the fly in the field. A trip to Costa Rica prompted a rewrite to streamline the code and eliminate as many manual steps as possible.
+I wrote this script to help prepare for an eleven day South & West Texas birding trip. Several other had shared eBird trip reports with me, which while incredibly helpful, were difficult to browse systematically. This script was written to help synthesize some of this information to help 1) find target species to study, 2) plan daily trip agendas, and 3) inform decision making on the fly in the field. A trip to Costa Rica prompted a rewrite to streamline code and eliminate most manual steps.
 
-You'll need to do some research first. I can't automate that part! Primarily this is figuring out  hotspots that you're interested in visiting. The eBird hotspots map, and other birders are helpful for this bit. Once you have a list of hotspots, you're ready to go. The script will output a table with the frequencies of target species across your hotspots of interest.
+You'll need to do some research first. I can't automate that part! Primarily this is figuring out hotspots that you're interested in visiting. The eBird hotspots map and other birders are helpful for this bit. Once you have a list of hotspots, you're ready to go. The script will summarize the target species across hotspots of interest.
 
 ## Highlights
 Starting with a text file containing eBird Hotspot (or region) IDs of interest and a configuration file, this script will: 
