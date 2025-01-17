@@ -12,8 +12,7 @@ Starting with a text file containing eBird Hotspot (or region) IDs of interest a
 
 ## Details & Caveats
 A few notes about the output:
-- The script parses anything that shows up on your eBird life list, so both "Native & Naturalized" & 
-"Exotic: Provisional" species will be listed in the output.
+- The script parses anything that shows up on your eBird life list, so both "Native & Naturalized" and "Exotic: Provisional" species will be listed in the output.
 - The excel file contains a column of frequencies species at each hotspot, a ```Max Freq``` column containing the maximum frequency for each species across parsed hotspots, and a ```Tax Sort``` column that allows you to easily re-sort taxonomically if you play around with the data in excel.
 - The color code should be fairly intutive:
   - Grey: < cutoff
@@ -27,11 +26,13 @@ Some important notes, caveats, and limitations:
 - Yes, the script reads your eBird password from the config file stored in plain text on your computer.
   - If you're paranoid you should remove it from ```ebird.cfg``` after running the script.
   - The password is stored in the ```cfg['pw']``` variable (see lines ```148, 142-143```, and is only sent to the eBird login page (see lines ```156-162```. I encourage you to examine the code before running.
+- Long staying and heavily twitched rarities 
+- You may need to do some Rarities: long staying rarities can yield spurious targets. e.g. Surfbird on south padre island (look up deets)
 - Things I haven't tested. If you do, please let me know:
   - When eBird is set to display both common and scientific names. 
   - I have not tested with Windows line endings, only Unix line endings.
 - Currently this only supports English Common names, because that's what's in the taxonomy file. If there are taxonomy files with names in other languages those may work.
-- Rarities: long staying rarities can yield spurious targets. e.g. Surfbird on south padre island (look up deets)
+
 
 
 
