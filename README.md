@@ -25,7 +25,7 @@ A few notes about the output:
 Some important notes, caveats, and limitations:
 - The script reads your eBird password from the config file stored in plain text on your computer.
   - If you're paranoid you should remove the password from ```ebird.cfg``` after running the script.
-  - The password is stored in the ```cfg['pw']``` variable (see lines and is only sent to the eBird login page (see lines ```148, 142-143, 156-162```. Examine the code before running.
+  - The password is stored in the ```cfg['pw']``` variable (see lines ```134-135```, and is only sent to the eBird login page (see lines ```140-154```. Examine the code before running.
 - Long staying and heavily twitched rarities can lead to spurious/unlikely targets. There were several of these for my Texas and Arizona trips. I suspect it's more of an issue in places that get tons of rarities. You may want to do a bit of data cleaning if something looks unlikely. Examples:
   - A Surbird seen on South Padre Island for ~1.5 weeks in April 2023 showed up at ~9.9% frequency in the output for my Texas trip.
   - One might also think that the seldom birded Boston Area bike path near me would be a great place to see a wintertime Townsed's Warlber (66.5%!).
