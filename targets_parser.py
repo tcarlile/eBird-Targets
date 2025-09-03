@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import requests, configparser, csv, xlsxwriter
+import time, requests, configparser, csv, xlsxwriter
 import pandas as pd
 import numpy as np
 
@@ -55,6 +55,7 @@ def parseTargets(session, hs, targets):
 	
 	targURL = buildTargetsURL(hs, cfg['bmo'], cfg['emo'], cfg['reg'], cfg['list'])
 	hotspot = session.get(targURL) #load hotspots target page
+	time.sleep(4) # To limit rate of eBird page loads 
 	soup = BeautifulSoup(hotspot.text, 'html.parser') 
 	
 	# Parse hotspot name
