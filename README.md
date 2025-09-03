@@ -1,7 +1,7 @@
 # 🐦 eBird-Targets 🐦
-I wrote this script to help prepare for an eleven day South & West Texas birding trip. Several other had shared eBird trip reports with me, which while incredibly helpful, were difficult to browse systematically. This script was written to help synthesize some of this information to help 1) find target species to study, 2) plan daily trip agendas, and 3) inform decision making on the fly in the field. A trip to Costa Rica prompted a rewrite to streamline code and eliminate most manual steps.
+I wrote this script to help prepare for a birding trip to South & West Texas. Several others had shared eBird trip reports, which while incredibly helpful, were difficult to browse systematically. I wanted to synthesize some of this information to 1) find target species to study, 2) plan daily trip agendas, and 3) inform decision making on the fly in the field. A trip to Costa Rica prompted a rewrite to streamline code and eliminate most manual steps.
 
-You'll need to do some research first. I can't automate that part! Primarily this is figuring out hotspots that you're interested in visiting. The eBird hotspots map and other birders are helpful for this bit. Once you have a list of hotspots, you're ready to go. The script will summarize the target species across hotspots of interest.
+You'll need to do some research first. I can't automate that part! Primarily this is figuring out what hotspots you're interested in. eBird hotspots map and other birders are helpful for this bit. Once you have a list of hotspots, you're ready to go. The script will summarize the target species across hotspots of interest.
 
 ## Highlights
 Starting with a text file containing eBird Hotspot (or region) IDs of interest and a configuration file, this script will: 
@@ -58,10 +58,10 @@ speccol = English name
 - ```user = ``` Your eBird username
 - ```pw = ``` Your eBird password
 - ```hotspots = ``` A text file containing eBird hotspot IDs of interest. You can find the hotspot ID in the hotspot's eBird URL. For example the URL for the Mount Auburn Cemetery hotspot is ```https://ebird.org/hotspot/L207391```. The hotspot ID is ```L207391```. See an example file below.
-- ```filebase = ``` A prefix for the script's output files. If you're preparing for a trip to Costa Rica you might use a prefix of ```CostaRica```I
+- ```filebase = ``` A prefix for the script's output files. If you're preparing for a trip to Costa Rica you might use a prefix of ```CostaRica```
 - ```bmo = ``` The beginning month of your time period of interest. Acceptable vales are ```1 - 12```
 - ```emo = ``` The ending month of your time period of interest. Acceptable vales are ```1 - 12```
-- ```reg = ``` The region list you want targets for. ```world``` specifies targets for your world life list. Other options are the hotspot ID or region ID. 
+- ```reg = ``` The region list you want targets for. ```world``` specifies targets for your world list. Other options are the hotspot ID or region ID. 
 - ```list = ``` The list you want targets for, options are: ```life```, ```year```, ```month```, ```day```	 
 - ```cutoff = ``` A percent cutoff for filtering data. A cutoff of ```1.5``` means that if a species doesn't have a frequency of >= 1.5% in at least one of the hotspots, it will be filtered from the output data.
 - ```taxonomy = ``` The filename for the current Clements/eBird taxonomy csv file. For example, from Oct 2024 to Oct 2025 this would be ```eBird-Clements-v2024-integrated-checklist-October-2024-rev.csv```.
