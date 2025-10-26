@@ -64,6 +64,7 @@ def parseTargets(session, hs, targets):
 	# We only want to parse native & naturalized and provisional
 	labels = ['native-and-naturalized', 'exotic-provisional']
 	# Iterate through categories
+	targLenB = len(targets) # Length of targets list before parsing URL
 	for label in labels:
 		for section in soup.find_all('section', {'aria-labelledby' : label } ): #probably a better way to find this
 			# Iterate through species
@@ -75,6 +76,8 @@ def parseTargets(session, hs, targets):
 				spuh = spuh.getText().strip()
 				freq = target.find('span', {'class' : 'Heading'} ).getText().strip().strip('.%')
 				targets.append([indx,spuh,freq,urls,name])
+	if targLenB == len(targets): # Occurs when target species data is empty
+		name = None # Change hotspot name to None
 	return targets, name
 
 def writeExcel(df):
@@ -157,7 +160,8 @@ def main():
 		hs_names, targets = [], [] # Init lists to store hotspot names & target data
 		for hs in hotspots: # Iterate hotspots & scrape data
 			targets, name = parseTargets(session, hs, targets)
-			hs_names.append(name)
+			if name != None: # Don't add empty hotspots to the list
+				hs_names.append(name)
 				
 	#Create longform dataframe, and do some formatting
 	targets_df = pd.DataFrame(targets, columns=['Rank', 'Species', 'Frequency', 'URL', 'Hotspot'])
