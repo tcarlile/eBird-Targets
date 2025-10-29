@@ -12,7 +12,6 @@ def getMdVal(soup):
 	'''
 	mdlog = a.find('input', {'name' : 'execution'}) # Find <input> tag with name execution
 	mdval = mdlog['value'] # Get the value parameter 
-			
 	return mdval
 
 def buildTargetsURL(hs, bmo, emo, reg, list):
