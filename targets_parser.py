@@ -26,12 +26,9 @@ def buildTargetsURL(hs, bmo, emo, reg, list):
 		hsurl: an eBird targets page URL	
 	
 	'''
-	hsurl = 'https://ebird.org/targets?' + \
-			'&r1=' + hs + \
-			'&bmo=' + bmo + \
-			'&emo=' + emo + \
-			'&r2=' + reg + \
-			'&t2=' + list
+	hsurl = 'https://ebird.org/targets?' + '&r1=' + hs + \
+			'&bmo=' + bmo + '&emo=' + emo + \
+			'&r2=' + reg + '&t2=' + list
 	return hsurl
 
 def parseTargets(session, hs, targets):
