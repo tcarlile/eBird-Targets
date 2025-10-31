@@ -10,7 +10,7 @@ def getMdVal(soup):
 	Returns
 		mdval: A string containing the hidden 'execution' parameter required for login
 	'''
-	mdlog = a.find('input', {'name' : 'execution'}) # Find <input> tag with name execution
+	mdlog = soup.find('input', {'name' : 'execution'}) # Find <input> tag with name execution
 	mdval = mdlog['value'] # Get the value parameter 
 	return mdval
 
