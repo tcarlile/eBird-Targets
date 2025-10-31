@@ -8,18 +8,10 @@ def getMdVal(soup):
 	Expects
 		soup: A BeautifulSoup object of the eBird login page
 	Returns
-		mdval: A string of containing the login 'execution' parameter 
+		mdval: A string containing the hidden 'execution' parameter required for login
 	'''
-	mdlog = soup.find_all('input')
-	# Loop through input tags, probably a better way to do this, but
-	# this was faster than troubleshooting the error
-	for i in mdlog:
-		try:
-			if i['name'] == 'execution':
-				mdval = i['value']
-		except:
-			pass
-			
+	mdlog = soup.find('input', {'name' : 'execution'}) # Find <input> tag with name execution
+	mdval = mdlog['value'] # Get the value parameter 
 	return mdval
 
 def buildTargetsURL(hs, bmo, emo, reg, list):
@@ -34,12 +26,9 @@ def buildTargetsURL(hs, bmo, emo, reg, list):
 		hsurl: an eBird targets page URL	
 	
 	'''
-	hsurl = 'https://ebird.org/targets?' + \
-			'&r1=' + hs + \
-			'&bmo=' + bmo + \
-			'&emo=' + emo + \
-			'&r2=' + reg + \
-			'&t2=' + list
+	hsurl = 'https://ebird.org/targets?' + '&r1=' + hs + \
+			'&bmo=' + bmo + '&emo=' + emo + \
+			'&r2=' + reg + '&t2=' + list
 	return hsurl
 
 def parseTargets(session, hs, targets):
