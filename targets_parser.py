@@ -128,9 +128,8 @@ def main():
 		response = session.get(login) # Load logon page
 		mdval = getMdVal(BeautifulSoup(response.text, 'html.parser')) #Get hidden data package
 		# Data package for logon
-		# If you're interested in how your password is used cfg['pw'] is the 
-		# variable to look for, it's only sent to the eBird login website in the 
-		# session.post command below 
+		# If you're interested in how your password is used cfg['pw'] is the variable of interest,
+		# It's only sent to the eBird login website in the session.post command below
 		data = {'locale' : 'en',
 				'username' : cfg['user'],
 				'password' : cfg['pw'],
