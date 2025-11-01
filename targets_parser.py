@@ -55,8 +55,10 @@ def parseTargets(session, hs, targets):
 			for target in section.find_all('li'): # Find all species elements, <li>, iterate, and parse
 				indx = target.find('div', {'class' : 'ResultsStats-index'} ).getText().strip().strip('.')
 				spuh = target.find('div', {'class' : 'SpecimenHeader'} ) # Gets <div> with species info
-				urls = spuh.find('a', href=True).get('href') # Get URL for species
-				urls = 'https://ebird.org' + urls[:urls.rfind('/')] # Add ebird, remove hotspot
+				#urls = spuh.find('a', href=True).get('href') # Get URL for species
+				urls = 'https://ebird.org/species/' + spuh.find('a', href=True).get('data-species-code') # Add ebird, remove hotspot
+				print(urls)
+				urls = 'https://ebird.org/species/' + spuh.find('a').get('data-species-code') # Add ebird, remove hotspot
 				print(urls)
 				spuh = spuh.getText().strip() # Get species name
 				print(spuh)
