@@ -54,14 +54,11 @@ def parseTargets(session, hs, targets):
 		for section in soup.find_all('section', {'aria-labelledby' : label } ):
 			for target in section.find_all('li'): # Find all species elements, <li>, iterate, and parse
 				indx = target.find('div', {'class' : 'ResultsStats-index'} ).getText().strip().strip('.')
-				print(indx)
-				spuh = target.find('div', {'class' : 'SpecimenHeader'} )
-				print(spuh)
-				urls = 'https://ebird.org'+spuh.find('a', href=True).get('href')
+				spuh = target.find('div', {'class' : 'SpecimenHeader'} ) # Gets <div> with species info
+				urls = 'https://ebird.org'+spuh.find('a', href=True).get('href')[:urls.rfind('/')] # URL for species, slice removes hotspot ID
+				#urls = urls[:urls.rfind('/')]
 				print(urls)
-				urls = urls[:urls.rfind('/')]
-				print(urls)
-				spuh = spuh.getText().strip()
+				spuh = spuh.getText().strip() # Get species name
 				print(spuh)
 				freq = target.find('span', {'class' : 'Heading'} ).getText().strip().strip('.%')
 				print(freq)
