@@ -48,7 +48,8 @@ def parseTargets(session, hs, targets):
 	soup = BeautifulSoup(hotspot.text, 'html.parser') 
 	
 	# Parse hotspot name
-	name = soup.find('div', {'id' : 'targets-results' }).find('div', {'class' : 'SectionHeading-heading' }).find_all('strong')[1].getText()
+	name = soup.find('option', {'value' : hs}).getText()
+	#name = soup.find('div', {'id' : 'targets-results' }).find('div', {'class' : 'SectionHeading-heading' }).find_all('strong')[1].getText()
 	print('Parsing '+name)
 	# We only want to parse native & naturalized and provisional
 	labels = ['native-and-naturalized', 'exotic-provisional']
