@@ -43,25 +43,23 @@ def parseTargets(session, hs, targets):
 	'''
 	
 	targURL = buildTargetsURL(hs, cfg['bmo'], cfg['emo'], cfg['reg'], cfg['list'])
-	hotspot = session.get(targURL) # Koad hotspots target page
-	time.sleep(4) # To limit rate of eBird page loads 
-	soup = BeautifulSoup(hotspot.text, 'html.parser') 
+	hotspot = session.get(targURL) # Load hotspots target page
+	soup = BeautifulSoup(hotspot.text, 'html.parser')
+	targLen = len(targets) # Length of targets list before parsing hotspot
 	
 	name = soup.find('option', {'value' : hs }).getText() # Parse hotspot name from region selection box
-	labels = ['native-and-naturalized', 'exotic-provisional'] # Only parse what eBird includes in life list
-	targLenB = len(targets) # Length of targets list before parsing URL
-	for label in labels: # Iterate through categories
+	for label in ['native-and-naturalized', 'exotic-provisional']: # Only parse what eBird includes in life list
 		for section in soup.find_all('section', {'aria-labelledby' : label } ):
 			for target in section.find_all('li'): # Find all species, <li> element per spuh, iterate, parse
-				indx = target.find('div', {'class' : 'ResultsStats-index'}).getText().strip().strip('.')
 				elem = target.find('div', {'class' : 'SpecimenHeader'}) 
 				urls = 'https://ebird.org/species/'+elem.find('a').get('data-species-code')
 				spuh = elem.getText().strip()
 				freq = target.find('div', {'class' : 'ResultsStats-stats'}).get('title').strip('.% frequency')
-				targets.append([indx,spuh,freq,urls,name])
-	if targLenB == len(targets): # Occurs when target species data is empty
-		name = None # Change hotspot name to None
+				targets.append([spuh,freq,urls,name])
 	print('Parsed ' + name)
+	time.sleep(4) # To limit rate of eBird page loads 
+	if targLen == len(targets): # Occurs when target species data is empty
+		name = None # Change hotspot name to None
 	return targets, name
 
 def writeExcel(df):
@@ -148,8 +146,7 @@ def main():
 				hs_names.append(name)
 				
 	#Create longform dataframe, and do some formatting
-	targets_df = pd.DataFrame(targets, columns=['Rank', 'Species', 'Frequency', 'URL', 'Hotspot'])
-	targets_df.drop(labels=['Rank'], axis=1, inplace=True)
+	targets_df = pd.DataFrame(targets, columns=['Species', 'Frequency', 'URL', 'Hotspot'])
 	targets_df['Frequency'] = pd.to_numeric(targets_df['Frequency'])
 	
 	#Create dataframe for storing URLS, will tweak a bit later
