@@ -43,29 +43,22 @@ def parseTargets(session, hs, targets):
 	'''
 	
 	targURL = buildTargetsURL(hs, cfg['bmo'], cfg['emo'], cfg['reg'], cfg['list'])
-	hotspot = session.get(targURL) #load hotspots target page
-	time.sleep(4) # To limit rate of eBird page loads 
-	soup = BeautifulSoup(hotspot.text, 'html.parser') 
+	hotspot = session.get(targURL) # Load hotspots target page
+	soup = BeautifulSoup(hotspot.text, 'html.parser')
+	targLen = len(targets) # Length of targets list before parsing hotspot
 	
-	# Parse hotspot name
-	name = soup.find('div', {'id' : 'targets-results' }).find('div', {'class' : 'SectionHeading-heading' }).find_all('strong')[1].getText()
-	print('Parsing '+name)
-	# We only want to parse native & naturalized and provisional
-	labels = ['native-and-naturalized', 'exotic-provisional']
-	# Iterate through categories
-	targLenB = len(targets) # Length of targets list before parsing URL
-	for label in labels:
-		for section in soup.find_all('section', {'aria-labelledby' : label } ): #probably a better way to find this
-			# Iterate through species
-			for target in section.find_all('li'):
-				indx = target.find('div', {'class' : 'ResultsStats-index'} ).getText().strip().strip('.')
-				spuh = target.find('div', {'class' : 'SpecimenHeader'} )
-				urls = 'https://ebird.org'+spuh.find('a', href=True).get('href')
-				urls = urls[:urls.rfind('/')]
-				spuh = spuh.getText().strip()
-				freq = target.find('span', {'class' : 'Heading'} ).getText().strip().strip('.%')
-				targets.append([indx,spuh,freq,urls,name])
-	if targLenB == len(targets): # Occurs when target species data is empty
+	name = soup.find('option', {'value' : hs }).getText() # Parse hotspot name from region selection box
+	for label in ['native-and-naturalized', 'exotic-provisional']: # Only parse what eBird includes in life list
+		for section in soup.find_all('section', {'aria-labelledby' : label } ):
+			for target in section.find_all('li'): # Find all species, <li> element per spuh, iterate, parse
+				elem = target.find('div', {'class' : 'SpecimenHeader'}) 
+				urls = 'https://ebird.org/species/'+elem.find('a').get('data-species-code')
+				spuh = elem.getText().strip()
+				freq = target.find('div', {'class' : 'ResultsStats-stats'}).get('title').strip('.% frequency')
+				targets.append([spuh,freq,urls,name])
+	print('Parsed ' + name)
+	time.sleep(4) # To limit rate of eBird page loads 
+	if targLen == len(targets): # Occurs when target species data is empty
 		name = None # Change hotspot name to None
 	return targets, name
 
@@ -135,9 +128,8 @@ def main():
 		response = session.get(login) # Load logon page
 		mdval = getMdVal(BeautifulSoup(response.text, 'html.parser')) #Get hidden data package
 		# Data package for logon
-		# If you're interested in how your password is used cfg['pw'] is the 
-		# variable to look for, it's only sent to the eBird login website in the 
-		# session.post command below 
+		# If you're interested in how your password is used cfg['pw'] is the variable of interest,
+		# It's only sent to the eBird login website in the session.post command below
 		data = {'locale' : 'en',
 				'username' : cfg['user'],
 				'password' : cfg['pw'],
@@ -153,8 +145,7 @@ def main():
 				hs_names.append(name)
 				
 	#Create longform dataframe, and do some formatting
-	targets_df = pd.DataFrame(targets, columns=['Rank', 'Species', 'Frequency', 'URL', 'Hotspot'])
-	targets_df.drop(labels=['Rank'], axis=1, inplace=True)
+	targets_df = pd.DataFrame(targets, columns=['Species', 'Frequency', 'URL', 'Hotspot'])
 	targets_df['Frequency'] = pd.to_numeric(targets_df['Frequency'])
 	
 	#Create dataframe for storing URLS, will tweak a bit later
