@@ -66,48 +66,52 @@ def writeExcel(df):
 	'''
 	'''
 
+	writer = pd.ExcelWriter(cfg['filebase']+'_targets.xlsx', engine='xlsxwriter') # Create excel file
+	name = cfg['filebase']+' Targets' # Sheet name
 	df = df.round(decimals=1)
-	
-	writer = pd.ExcelWriter(cfg['filebase']+'_targets.xlsx', engine='xlsxwriter')
-	import pandas.io.formats.excel
-	pandas.io.formats.excel.header_style = None
-	name = cfg['filebase']+' Targets'
-	df.to_excel(writer, sheet_name=name)
-	
+	df.to_excel(writer, sheet_name=name) # Write data
+
+	# Get workbook, worksheet, and dimensions for forattinf 
 	workbook = writer.book
 	worksheet = writer.sheets[name]
 	ncol, nrow = worksheet.dim_colmax, worksheet.dim_rowmax
-	
-	#Setting up formatting of data
+
+	# Formatting cells below cutoff
 	gry = workbook.add_format({"bg_color": "#D0D0D0", "font_color": "#D0D0D0"})
-	red = workbook.add_format({"bg_color": "#FFC7CE", "font_color": "#9C0006"})
-	ylw = workbook.add_format({"bg_color": "#FCEAA6", "font_color": "#935A1D"})
-	blu = workbook.add_format({"bg_color": "#ACC8E9", "font_color": "#1F3D61"})
-	grn = workbook.add_format({"bg_color": "#C6EFCE", "font_color": "#006100"})
 	worksheet.conditional_format(1, 1, nrow, ncol-1, {'type': 'cell', 'criteria': '<',
 										'value': cfg['cutoff'], 'format': gry})
+	# Formatting cells between cutoff & 10%
+	red = workbook.add_format({"bg_color": "#FFC7CE", "font_color": "#9C0006"})
 	worksheet.conditional_format(1, 1, nrow, ncol-1, {'type': 'cell', 'criteria': 'between',
 										'minimum': cfg['cutoff'], 'maximum' : 10, 'format': red})
+	# Formatting cells between 10 & 25%
+	ylw = workbook.add_format({"bg_color": "#FCEAA6", "font_color": "#935A1D"})
 	worksheet.conditional_format(1, 1, nrow, ncol-1, {'type': 'cell', 'criteria': 'between',
 										'minimum': 10, 'maximum' : 25, 'format': ylw})
+	# Formatting cells between 25 & 50%
+	blu = workbook.add_format({"bg_color": "#ACC8E9", "font_color": "#1F3D61"})
 	worksheet.conditional_format(1, 1, nrow, ncol-1, {'type': 'cell', 'criteria': 'between',
 										'minimum': 25, 'maximum' : 50, 'format': blu})
+	# Formatting cells > 50%
+	grn = workbook.add_format({"bg_color": "#C6EFCE", "font_color": "#006100"})
 	worksheet.conditional_format(1, 1, nrow, ncol-1, {'type': 'cell', 'criteria': '>=',
 													'value': 50, 'format': grn})
+	
+	# Cell formatting
 	data_format = workbook.add_format({'border': 1, 'bold': True, 'font_size': 14 })
 	worksheet.set_column(1, ncol, 15, cell_format=data_format)
 
-	# Format header row in really annoying way because of pandas enforces header formats
+	# Format header row in really annoying way because pandas enforces header formats
 	hs_format = workbook.add_format({'bold': True, 'text_wrap': True, 'valign': 'vcenter', 
 									'align': 'center', 'border': 1, 'font_size': 15 })
 	for i, value in enumerate(df.columns.values):
 		worksheet.write(0, i + 1, value, hs_format)
 	
-	# Format indexes row in really annoying way because of pandas enforces formats
+	# Format indexes row in really annoying way because pandas enforces col1 formats
 	sp_format = workbook.add_format({'bold': True, 'align': 'right', 'border': 1, 'font_size': 15 })
 	for i, (idx, row) in enumerate(df.iterrows()):
 		worksheet.write(i+1, 0 , idx, sp_format)
-	
+	# Size first row & first column
 	worksheet.set_column('A:A', 40)
 	worksheet.set_row(0, 80)
 	writer.close()
