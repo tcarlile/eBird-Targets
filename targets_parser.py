@@ -43,31 +43,32 @@ def parseTargets(session, hs, targets):
 	'''
 	
 	targURL = buildTargetsURL(hs, cfg['bmo'], cfg['emo'], cfg['reg'], cfg['list'])
-	hotspot = session.get(targURL) #load hotspots target page
+	hotspot = session.get(targURL) # Koad hotspots target page
 	time.sleep(4) # To limit rate of eBird page loads 
 	soup = BeautifulSoup(hotspot.text, 'html.parser') 
 	
-	# Parse hotspot name
-	name = soup.find('option', {'value' : hs}).getText()
-	#name = soup.find('div', {'id' : 'targets-results' }).find('div', {'class' : 'SectionHeading-heading' }).find_all('strong')[1].getText()
-	print('Parsing '+name)
-	# We only want to parse native & naturalized and provisional
-	labels = ['native-and-naturalized', 'exotic-provisional']
-	# Iterate through categories
+	name = soup.find('option', {'value' : hs }).getText() # Parse hotspot name from region selection box
+	labels = ['native-and-naturalized', 'exotic-provisional'] # Only parse what eBird includes in life list
 	targLenB = len(targets) # Length of targets list before parsing URL
-	for label in labels:
-		for section in soup.find_all('section', {'aria-labelledby' : label } ): #probably a better way to find this
-			# Iterate through species
-			for target in section.find_all('li'):
+	for label in labels: # Iterate through categories
+		for section in soup.find_all('section', {'aria-labelledby' : label } ):
+			for target in section.find_all('li'): # Find all species elements, <li>, iterate, and parse
 				indx = target.find('div', {'class' : 'ResultsStats-index'} ).getText().strip().strip('.')
+				print(indx)
 				spuh = target.find('div', {'class' : 'SpecimenHeader'} )
+				print(spuh)
 				urls = 'https://ebird.org'+spuh.find('a', href=True).get('href')
+				print(urls)
 				urls = urls[:urls.rfind('/')]
+				print(urls)
 				spuh = spuh.getText().strip()
+				print(spuh)
 				freq = target.find('span', {'class' : 'Heading'} ).getText().strip().strip('.%')
+				print(freq)
 				targets.append([indx,spuh,freq,urls,name])
 	if targLenB == len(targets): # Occurs when target species data is empty
 		name = None # Change hotspot name to None
+	print('Parsed ' + name)
 	return targets, name
 
 def writeExcel(df):
