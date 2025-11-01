@@ -57,10 +57,7 @@ def parseTargets(session, hs, targets):
 				elem = target.find('div', {'class' : 'SpecimenHeader'} ) # Gets <div> with species info
 				urls = 'https://ebird.org/species/' + elem.find('a').get('data-species-code') # Spuh URL
 				spuh = elem.getText().strip() # Get species name
-				#freq = target.find('span', {'class' : 'Heading'} ).getText().strip().strip('.%')
-				freq = target.find('div', {'class' : 'ResultsStats-stats'}).get('title')
-				#.getText().strip().strip('.%')
-				print(freq)
+				freq = target.find('div', {'class' : 'ResultsStats-stats'}).get('title').strip('.% frequency')
 				targets.append([indx,spuh,freq,urls,name])
 	if targLenB == len(targets): # Occurs when target species data is empty
 		name = None # Change hotspot name to None
