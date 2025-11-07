@@ -50,8 +50,8 @@ emo = 12
 reg = world
 list = life
 cutoff = 1.5
-taxonomy = eBird-Clements-v2024-integrated-checklist-October-2024-rev.csv
-taxsort = sort v2024
+taxonomy = eBird-Clements_v2025-integrated-checklist-October-2025.csv
+taxsort = sort v2025
 speccol = English name
 ```
 
@@ -82,9 +82,9 @@ L448041
 ## Updates
 eBird's yearly taxonomy update will require downloading the latest version of the Clements/eBird checklist and changing a couple of lines in the cfg file. I won't host these here, but will try to keep these links up to date.
 
-The 2024 taxonomy downloads page, and a direct link to the relevant 2024 taxonomy file are below.
-- [2024 Taxonomy Download Page](https://www.birds.cornell.edu/clementschecklist/introduction/updateindex/october-2024/2024-citation-checklist-downloads/)
-- [2024 Clements/eBird csv](https://www.birds.cornell.edu/clementschecklist/wp-content/uploads/2024/10/eBird-Clements-v2024-integrated-checklist-October-2024-rev.csv)
+The 2025 taxonomy downloads page, and a direct link to the relevant 2024 taxonomy file are below.
+- [2025 Taxonomy Download Page](https://www.birds.cornell.edu/clementschecklist/introduction/updateindex/october-2025/2025-citation-checklist-downloads/)
+- [2025 Clements/eBird csv](https://www.birds.cornell.edu/clementschecklist/wp-content/uploads/2025/10/eBird-Clements_v2025-integrated-checklist-October-2025.csv)
 
 Updates to the eBird website will require more significant updates. eBird's 2024 style update required rewriting the code that parses the targets table HTML. Hopefully, the current eBird style will be stable for a few years.
 
