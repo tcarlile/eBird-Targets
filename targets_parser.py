@@ -67,10 +67,12 @@ def writeExcel(df):
 	'''
 
 	writer = pd.ExcelWriter(cfg['filebase']+'_targets.xlsx', engine='xlsxwriter') # Create excel file
+	#TODO pass header=False
 	name = cfg['filebase']+' Targets' # Sheet name
 	df = df.round(decimals=1)
 	df.to_excel(writer, sheet_name=name) # Write data
-
+	# TODO Pandas io formats = None Line Here
+	
 	# Get workbook, worksheet, and dimensions for forattinf 
 	workbook = writer.book
 	worksheet = writer.sheets[name]
@@ -101,9 +103,10 @@ def writeExcel(df):
 	data_format = workbook.add_format({'border': 1, 'bold': True, 'font_size': 14 })
 	worksheet.set_column(1, ncol, 15, cell_format=data_format)
 
-	# Format header row in really annoying way because pandas enforces header formats
+	# Format header row in really annoying way because pandas enforces header format
 	hs_format = workbook.add_format({'bold': True, 'text_wrap': True, 'valign': 'vcenter', 
 									'align': 'center', 'border': 1, 'font_size': 15 })
+	# TODO REPLACE ITERATION WITH bulk format
 	for i, value in enumerate(df.columns.values):
 		worksheet.write(0, i + 1, value, hs_format)
 	
@@ -111,6 +114,8 @@ def writeExcel(df):
 	sp_format = workbook.add_format({'bold': True, 'align': 'right', 'border': 1, 'font_size': 15 })
 	for i, (idx, row) in enumerate(df.iterrows()):
 		worksheet.write(i+1, 0 , idx, sp_format)
+	# TODO REPLACE ITERATION WITH bulk format
+	
 	# Size first row & first column
 	worksheet.set_column('A:A', 40)
 	worksheet.set_row(0, 80)
