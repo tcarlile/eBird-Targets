@@ -64,7 +64,7 @@ speccol = English name
 - ```reg = ``` The region list you want targets for. ```world``` specifies targets for your world list. Other options are the hotspot ID or region ID. 
 - ```list = ``` The list you want targets for, options are: ```life```, ```year```, ```month```, ```day```	 
 - ```cutoff = ``` A percent cutoff for filtering data. A cutoff of ```1.5``` means that if a species doesn't have a frequency of >= 1.5% in at least one of the hotspots, it will be filtered from the output data.
-- ```taxonomy = ``` The filename for the current Clements/eBird taxonomy csv file. For example, from Oct 2024 to Oct 2025 this would be ```eBird-Clements-v2024-integrated-checklist-October-2024-rev.csv```.
+- ```taxonomy = ``` The filename for the current Clements/eBird taxonomy csv file. For example, from Oct 2025 to Oct 2026 this would be ```eBird-Clements_v2025-integrated-checklist-October-2025.csv```.
 - ```taxsort = ``` The column header in the taxonomy csv file that specifies the taxonomic sort order (e.g. ```sort v2024```)
 - ```speccol = ``` The column header in the taxonomy csv file that specifies the species name (e.g. ```English name```)
 
