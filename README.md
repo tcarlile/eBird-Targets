@@ -27,7 +27,7 @@ Starting with a text file containing eBird Hotspot (or region) IDs of interest a
 **Some important notes, caveats, and limitations:**
 - The script ***reads your eBird password from the config file stored in plain text on your computer***.
   - If you're paranoid you should remove the password from ```ebird.cfg``` after running the script.
-  - The password is stored in the ```cfg['pw']``` variable (see lines ```120-121```, and is only sent to the eBird login page (see lines ```126-139```. I encourage you to examine the code before running.
+  - The password is stored in the ```cfg['pw']``` variable (see lines ```131-132```, and is only sent to the eBird login page (see lines ```137-150```. I encourage you to examine the code before running.
 - Long staying and heavily twitched rarities can lead to spurious/unlikely targets. There were several of these for my Texas and Arizona trips. I suspect it's more of an issue in places that get tons of rarities. You may want to do some data cleaning if something looks unlikely. Examples:
   - A Surbird seen on South Padre Island for ~1.5 weeks in April 2023 showed up at ~9.9% frequency in the output for my Texas trip.
   - One might also think that the seldom birded Boston Area bike path near me would be a great place to see a wintertime Townsed's Warlber (66.5%!).
