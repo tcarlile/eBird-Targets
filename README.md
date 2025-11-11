@@ -6,14 +6,16 @@ You'll need to do some research first. I can't automate that part! Primarily thi
 ## Highlights
 Starting with a text file containing eBird Hotspot (or region) IDs of interest and a configuration file, this script will: 
 - Logon to your eBird account, load the targets page for each hotspot, and parse the targets data
-- Combine Hotspot Targets tables into a single taxonomically sorted Species x Hotspot table
-- Output an excel sheet with the Species x Hotspot table, color coded by frequency
+- Output an Excel file with a Species x Hotspot table, taxonomically sorted, and color coded by frequency
 - Output a crude "Study Guide." At the moment, just an HTML file with links to eBird species accounts
 
 ## Details & Caveats
 **A few notes about the output:**
-- The script parses anything that shows up on your life list, so both "Native & Naturalized" and "Exotic: Provisional" species are listed in the output.
-- The excel file contains a column of species frequencies for each hotspot, a ```Max Freq``` column with the maximum frequencies across parsed hotspots, and a ```Tax Sort``` column that allows you to easily re-sort taxonomically if you play around with the data.
+- The script parses "eBird lifers", so both "Native & Naturalized" and "Exotic: Provisional" are included in the output.
+- The Excel file contains:
+  - A column of species frequencies for each hotspot
+  - A ```Max Freq``` column with the maximum frequency for each species across parsed hotspots
+  - A ```Tax Sort``` column that allows you to easily re-sort taxonomically
 - The color code should be fairly intutive:
   - Grey: < cutoff
   - Red: cutoff - 10%
