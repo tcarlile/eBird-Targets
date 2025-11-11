@@ -1,18 +1,18 @@
 # 🐦 eBird-Targets 🐦
-I wrote this script to help prepare for a birding trip to South & West Texas. Several others had shared eBird trip reports, which while incredibly helpful, were difficult to browse systematically. I wanted to synthesize some of this information to 1) find target species to study, 2) plan daily trip agendas, and 3) inform decision making on the fly in the field. A trip to Costa Rica prompted a rewrite to streamline code and eliminate most manual steps.
+I wrote this script to help prepare for a birding trip to South & West Texas. I had several shared eBird trip reports, which while incredibly helpful, were difficult to browse systematically. I wanted to synthesize some of this information to 1) find target species to study, 2) plan daily trip agendas, and 3) inform decision making on the fly in the field. A trip to Costa Rica prompted a rewrite to streamline code and eliminate most manual steps.
 
-You'll need to do some research first. I can't automate that part! Primarily this is figuring out what hotspots you're interested in. eBird hotspots map and other birders are helpful for this bit. Once you have a list of hotspots, you're ready to go. The script will summarize the target species across hotspots of interest.
+You'll need to do some research first. I can't automate that part! Primarily this is figuring out what hotspots you're interested in. The eBird hotspots map and other birders are helpful for this bit. Once you have a list of hotspots, you're ready to go. The script will summarize the target species across hotspots of interest.
 
 ## Highlights
 Starting with a text file containing eBird Hotspot (or region) IDs of interest and a configuration file, this script will: 
-- Logon to your eBird account, load the targets page for each hotspot, & parse the targets data
-- Combine hotspot targets tables into a single taxonomically sorted Species x Hotspot table
+- Logon to your eBird account, load the targets page for each hotspot, and parse the targets data
+- Combine Hotspot Targets tables into a single taxonomically sorted Species x Hotspot table
 - Output an excel sheet with the Species x Hotspot table, color coded by frequency
 - Output a crude "Study Guide." At the moment, just an HTML file with links to eBird species accounts
 
 ## Details & Caveats
 A few notes about the output:
-- The script parses anything that shows up on your eBird life list, so both "Native & Naturalized" and "Exotic: Provisional" species are listed in the output.
+- The script parses anything that shows up on your life list, so both "Native & Naturalized" and "Exotic: Provisional" species are listed in the output.
 - The excel file contains a column of species frequencies for each hotspot, a ```Max Freq``` column with the maximum frequencies across parsed hotspots, and a ```Tax Sort``` column that allows you to easily re-sort taxonomically if you play around with the data.
 - The color code should be fairly intutive:
   - Grey: < cutoff
@@ -23,7 +23,7 @@ A few notes about the output:
 - The "Study Guide" is just an unformatted html file with a taxonomically sorted list of links to eBird species accounts.
   
 Some important notes, caveats, and limitations:
-- The script reads your eBird password from the config file stored in plain text on your computer.
+- The script ***reads your eBird password from the config file stored in plain text on your computer***.
   - If you're paranoid you should remove the password from ```ebird.cfg``` after running the script.
   - The password is stored in the ```cfg['pw']``` variable (see lines ```120-121```, and is only sent to the eBird login page (see lines ```126-139```. Examine the code before running.
 - Long staying and heavily twitched rarities can lead to spurious/unlikely targets. There were several of these for my Texas and Arizona trips. I suspect it's more of an issue in places that get tons of rarities. You may want to do a bit of data cleaning if something looks unlikely. Examples:
@@ -89,8 +89,8 @@ The 2025 taxonomy downloads page, and a direct link to the relevant 2024 taxonom
 Updates to the eBird website will require more significant updates. eBird's 2024 style update required rewriting the code that parses the targets table HTML. Hopefully, the current eBird style will be stable for a few years.
 
 ## Dependencies
-This script requires python3 with pandas, numpy, BeautifulSoup, requests, csv, and xlsxwriter. The versions I'm using are listed below. It's unlikely that this exact configuration is needed, but earlier versions of *some* packages might not work.
-- python3 [3.9.12]
+This script requires python3 with pandas, numpy, BeautifulSoup, requests, csv, and xlsxwriter. The range of versions I've used succesfully are listed below. It's unlikely that this exact configuration is needed, but earlier versions of *some* packages might not work.
+- python3 [3.9.12] -
 - pandas [1.4.2]
 - numpy [1.21.5]
 - bs4 [4.11.1]
