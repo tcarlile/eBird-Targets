@@ -33,10 +33,10 @@ Starting with a text file containing eBird Hotspot (or region) IDs of interest a
   - One might also think that the seldom birded Boston Area bike path near me would be a great place to see a wintertime Townsed's Warlber (66.5%!).
 - There are some things I haven't tested. If you do, please let me know:
   - When config and hotspots files have Windows line endings. I think pyhton3 handles this automatically, but I haven't explicitly tested.
-- Currently this only supports English Common names, because that's what's in the taxonomy file. If there are taxonomy files with names in other languages those may work.
+- Currently this only supports English (United States) Common names, because that's what's in the taxonomy file. If there are taxonomy files with names in other languages those may work.
 
 ## Usage
-This script is run in the terminal with the command ```python3 targets_parser.py```. It should be run in a directory containing an ```ebird.cfg``` file, a file of hotspots of interest, and the Clements/eBird taxonomy csv file (see below for details).
+This script is run in the terminal with the command ```python3 targets_parser.py```. It should be run in a directory containing an ```ebird.cfg``` file, a file of hotspots of interest, and the Clements/eBird taxonomy csv file.
 
 All relevant parameters are passed to the script in a configuration file that must be named ```ebird.cfg```. The format for each parameter passed to the script is ```parameter = value```. The text to the left of the ```=``` should not be changed. See an example config file below, followed by a description of each parameter:
 
