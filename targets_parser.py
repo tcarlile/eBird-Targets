@@ -188,7 +188,7 @@ def main():
 	with open(cfg['filebase']+'_study_guide.html', 'w') as f:
 		f.write('<!DOCTYPE html>\n<html>\n<head>\n<title>eBird Study Guide</title>\n</head>\n')
 		for i, row in url_df.iterrows():
-			f.write('<div><a href=\"'+row[0]+'\">'+i+'</a></div>\n')
+			f.write('<div><a href=\"'+row.iloc[0]+'\">'+i+'</a></div>\n')
 	
 	writeExcel(targets_df)
 	targets_df.to_csv(cfg['filebase']+'_targets.csv')
