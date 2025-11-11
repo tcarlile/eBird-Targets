@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 import time, requests, configparser, csv, xlsxwriter
 import pandas as pd
-import numpy as np
 
 def getMdVal(soup):
 	'''
@@ -51,7 +50,12 @@ def parseTargets(session, hs, targets):
 	for label in ['native-and-naturalized', 'exotic-provisional']: # Only parse what eBird includes in life list
 		for section in soup.find_all('section', {'aria-labelledby' : label } ):
 			for target in section.find_all('li'): # Find all species, <li> element per spuh, iterate, parse
-				elem = target.find('div', {'class' : 'SpecimenHeader'}) 
+				elem = target.find('div', {'class' : 'SpecimenHeader'})
+				try: # If user has Common + Scentific displayed find() yields bs4.element.Tag 
+					elem.find('em', {'class' : 'sci'}).decompose() # Remove scientific name
+				except: # If user has Common name displayed find() yields NoneType
+					pass
+				# Only psychopaths would use the Scientific name only setting, so I'm not going to deal with that
 				urls = 'https://ebird.org/species/'+elem.find('a').get('data-species-code')
 				spuh = elem.getText().strip()
 				freq = target.find('div', {'class' : 'ResultsStats-stats'}).get('title').strip('.% frequency')
@@ -71,7 +75,6 @@ def writeExcel(df):
 	name = cfg['filebase']+' Targets' # Sheet name
 	df = df.round(decimals=1)
 	df.to_excel(writer, sheet_name=name) # Write data
-	# TODO Pandas io formats = None Line Here
 	
 	# Get workbook, worksheet, and dimensions for forattinf 
 	workbook = writer.book
@@ -114,7 +117,6 @@ def writeExcel(df):
 	sp_format = workbook.add_format({'bold': True, 'align': 'right', 'border': 1, 'font_size': 15 })
 	for i, (idx, row) in enumerate(df.iterrows()):
 		worksheet.write(i+1, 0 , idx, sp_format)
-	# TODO REPLACE ITERATION WITH bulk format
 	
 	# Size first row & first column
 	worksheet.set_column('A:A', 40)
