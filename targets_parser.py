@@ -37,7 +37,7 @@ def parseTargets(session, hs, targets):
 		targets: A list of lists
 	Returns:
 		targets: An expanded list with parsed targets data table appended as lines
-			data includes [index, species name, frequency, eBird species URL]		
+			data includes [species name, frequency, eBird species URL]		
 	'''
 	
 	targURL = buildTargetsURL(hs, cfg['bmo'], cfg['emo'], cfg['reg'], cfg['list'])
@@ -62,7 +62,7 @@ def parseTargets(session, hs, targets):
 	print('Parsed ' + name)
 	time.sleep(4) # To limit rate of eBird page loads 
 	if targLen == len(targets): # Occurs when target species data is empty
-		name = None # Change hotspot name to None
+		name = None # Change hotspot name to None, used as check in main()
 	return targets, name
 
 def writeExcel(df):
@@ -75,7 +75,7 @@ def writeExcel(df):
 	df = df.round(decimals=1)
 	df.to_excel(writer, sheet_name=name) # Write data
 	
-	# Get workbook, worksheet, and dimensions for forattinf 
+	# Get workbook, worksheet, and dimensions for formatting
 	workbook = writer.book
 	worksheet = writer.sheets[name]
 	ncol, nrow = worksheet.dim_colmax, worksheet.dim_rowmax
