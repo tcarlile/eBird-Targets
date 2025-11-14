@@ -2,6 +2,31 @@ from bs4 import BeautifulSoup
 import time, requests, configparser, csv, xlsxwriter
 import pandas as pd
 
+def getConfig(fn):
+	'''
+	Expects:
+		fn: A string specifying the config filename
+	Returns:
+		cfg: a dict of config file parameters
+	'''
+	# Read config file & hotspot file
+	global cfg
+	config = configparser.RawConfigParser()
+	config.read(fn)
+	cfg = dict(config.items('ebird-config'))
+	return cfg
+
+def getHotspots(fn):
+	'''
+	Expects:
+		fn: A string specifying the hotspots filename
+	Returns:
+		cfg: a dict of config file parameters
+	'''
+	with open(fn) as f:
+	hotspots = [line.strip() for line in f]
+	return hotspots
+	
 def getMdVal(soup):
 	'''
 	Expects
@@ -125,13 +150,9 @@ def writeExcel(df):
 def main():
 	
 	# Read config file & hotspot file
-	global cfg
-	config = configparser.RawConfigParser()
-	config.read('ebird.cfg')
-	cfg = dict(config.items('ebird-config'))
-	with open(cfg['hotspots']) as f:
-		hotspots = [line.strip() for line in f]
-	
+	cfg = getConfig('ebird.cfg') #Read Config File
+	hotspots = getHotspots(cfg['hotspots'])
+
 	# eBird login URL
 	login = 'https://secure.birds.cornell.edu/cassso/login?service=https%3A%2F%2Febird.org%2Flogin%2Fcas%3Fportal%3Debird&locale=en'
 	with requests.session() as session: # Open session
@@ -151,7 +172,7 @@ def main():
 		hs_names, targets = [], [] # Init lists to store hotspot names & target data
 		for hs in hotspots: # Iterate hotspots & scrape data
 			targets, name = parseTargets(session, hs, targets)
-			if name != None: # Don't add empty hotspots to the list
+			if name: # Don't add empty hotspots to the list
 				hs_names.append(name)
 				
 	#Create longform dataframe, and do some formatting
