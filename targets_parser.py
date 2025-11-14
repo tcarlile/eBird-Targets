@@ -38,6 +38,44 @@ def getMdVal(soup):
 	mdval = mdlog['value'] # Get the value parameter 
 	return mdval
 
+def ebirdLogin():
+	'''
+	Returns
+		session: A session object logged ito your ebird account
+	'''
+	ebirdURL = 'https://secure.birds.cornell.edu/cassso/login?service=https%3A%2F%2Febird.org%2Flogin%2Fcas%3Fportal%3Debird&locale=en'
+	
+	response = session.get(login) # Load logon page
+	mdval = getMdVal(BeautifulSoup(response.text, 'html.parser')) #Get hidden data package
+	# If you're interested in how your password is used cfg['pw'] is the variable of interest,
+	# It's only sent to the eBird login website in the session.post command below
+	data = {'locale' : 'en',
+			'username' : cfg['user'],
+			'password' : cfg['pw'], #Here's your Password!
+			'rememberMe' : 'on',
+			'execution' : mdval,
+			'_eventId' : 'submit'} 
+	r_post = session.post(ebirdURL, data=data) # Here's where it's used to log you into eBird
+	return session
+
+def parseHotspots(session, hotspots):
+	''''
+	Expects:
+		session: A logged in eBird session object
+		hotspots: A list f hotspot IDs
+	Returns:
+		hs_names: A list of hotspot names
+		targets: A list with parsed targets data across hotspots
+				data includes [species name, frequency, eBird species URL]	
+	'''
+	
+	hs_names, targets = [], [] # Init lists to store hotspot names & target data
+		for hs in hotspots: # Iterate hotspots & scrape data
+			targets, name = parseTargets(session, hs, targets)
+			if name: # Don't add empty hotspots to the list
+				hs_names.append(name)
+	return hs_names, targtes
+
 def buildTargetsURL(hs, bmo, emo, reg, list):
 	'''
 	Expects: elements of an eBird targets page URL, all str()
@@ -47,8 +85,7 @@ def buildTargetsURL(hs, bmo, emo, reg, list):
 		reg, Region for target list: "life" or hotspot ID/region ID
 		list, target period for list, "life", "year", "month", "day"	
 	Returns:
-		hsurl: an eBird targets page URL	
-	
+		hsurl: an eBird targets page URL
 	'''
 	hsurl = 'https://ebird.org/targets?' + '&r1=' + hs + \
 			'&bmo=' + bmo + '&emo=' + emo + '&r2=' + reg + '&t2=' + list
@@ -87,7 +124,7 @@ def parseTargets(session, hs, targets):
 	print('Parsed ' + name)
 	time.sleep(4) # To limit rate of eBird page loads 
 	if targLen == len(targets): # Occurs when target species data is empty
-		name = None # Change hotspot name to None, used as check in main()
+		name = None # Change hotspot name to None, used as check in parseHotspots()
 	return targets, name
 
 def writeExcel(df):
@@ -149,31 +186,31 @@ def writeExcel(df):
 
 def main():
 	
-	# Read config file & hotspot file
-	cfg = getConfig('ebird.cfg') #Read Config File
-	hotspots = getHotspots(cfg['hotspots'])
-
+	cfg = getConfig('ebird.cfg') # Read config file
+	hotspots = getHotspots(cfg['hotspots']) # Read hotspots file
+	session = ebirdLogin() # Login to eBird
+	hs_names, targets = parseHotspots(hotspots)
 	# eBird login URL
-	login = 'https://secure.birds.cornell.edu/cassso/login?service=https%3A%2F%2Febird.org%2Flogin%2Fcas%3Fportal%3Debird&locale=en'
-	with requests.session() as session: # Open session
-		response = session.get(login) # Load logon page
-		mdval = getMdVal(BeautifulSoup(response.text, 'html.parser')) #Get hidden data package
+	#login = 'https://secure.birds.cornell.edu/cassso/login?service=https%3A%2F%2Febird.org%2Flogin%2Fcas%3Fportal%3Debird&locale=en'
+	#with requests.session() as session: # Open session
+	#	response = session.get(login) # Load logon page
+	#	mdval = getMdVal(BeautifulSoup(response.text, 'html.parser')) #Get hidden data package
 		# Data package for logon
 		# If you're interested in how your password is used cfg['pw'] is the variable of interest,
 		# It's only sent to the eBird login website in the session.post command below
-		data = {'locale' : 'en',
-				'username' : cfg['user'],
-				'password' : cfg['pw'],
-				'rememberMe' : 'on',
-				'execution' : mdval,
-				'_eventId' : 'submit'} 
-		r_post = session.post(login, data=data) # Submit login data
+	#	data = {'locale' : 'en',
+	#			'username' : cfg['user'],
+	#			'password' : cfg['pw'],
+	#			'rememberMe' : 'on',
+	#			'execution' : mdval,
+	#			'_eventId' : 'submit'} 
+	#	r_post = session.post(login, data=data) # Submit login data
 		
-		hs_names, targets = [], [] # Init lists to store hotspot names & target data
-		for hs in hotspots: # Iterate hotspots & scrape data
-			targets, name = parseTargets(session, hs, targets)
-			if name: # Don't add empty hotspots to the list
-				hs_names.append(name)
+	#	hs_names, targets = [], [] # Init lists to store hotspot names & target data
+	#	for hs in hotspots: # Iterate hotspots & scrape data
+	#		targets, name = parseTargets(session, hs, targets)
+	#		if name: # Don't add empty hotspots to the list
+	#			hs_names.append(name)
 				
 	#Create longform dataframe, and do some formatting
 	targets_df = pd.DataFrame(targets, columns=['Species', 'Frequency', 'URL', 'Hotspot'])
