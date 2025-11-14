@@ -51,9 +51,9 @@ def parseTargets(session, hs, targets):
 		for section in soup.find_all('section', {'aria-labelledby' : label } ):
 			for target in section.find_all('li'): # Find all species, <li> element per spuh, iterate, parse
 				elem = target.find('div', {'class' : 'SpecimenHeader'})
-				try: # If user has Common + Scentific displayed find() yields bs4.element.Tag 
+				if elem.find('em', {'class' : 'sci'}) # find() yields bs4.element.Tag if Common + Sci displayed
 					elem.find('em', {'class' : 'sci'}).decompose() # Remove scientific name
-				except: # If user has Common name displayed find() yields NoneType
+				else: # If user has Common name displayed find() yields NoneType
 					pass
 				# Only psychopaths would use the Scientific name only setting, so I'm not going to deal with that
 				urls = 'https://ebird.org/species/'+elem.find('a').get('data-species-code')
