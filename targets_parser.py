@@ -44,8 +44,9 @@ def ebirdLogin():
 		session: A session object logged ito your ebird account
 	'''
 	ebirdURL = 'https://secure.birds.cornell.edu/cassso/login?service=https%3A%2F%2Febird.org%2Flogin%2Fcas%3Fportal%3Debird&locale=en'
-	
-	response = session.get(login) # Load logon page
+
+	session = requests.session()
+	response = session.get(ebirdURL) # Load logon page
 	mdval = getMdVal(BeautifulSoup(response.text, 'html.parser')) #Get hidden data package
 	# If you're interested in how your password is used cfg['pw'] is the variable of interest,
 	# It's only sent to the eBird login website in the session.post command below
@@ -189,7 +190,7 @@ def main():
 	cfg = getConfig('ebird.cfg') # Read config file
 	hotspots = getHotspots(cfg['hotspots']) # Read hotspots file
 	session = ebirdLogin() # Login to eBird
-	hs_names, targets = parseHotspots(hotspots)
+	hs_names, targets = parseHotspots(session, hotspots)
 	# eBird login URL
 	#login = 'https://secure.birds.cornell.edu/cassso/login?service=https%3A%2F%2Febird.org%2Flogin%2Fcas%3Fportal%3Debird&locale=en'
 	#with requests.session() as session: # Open session
