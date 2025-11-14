@@ -70,10 +70,10 @@ def parseHotspots(session, hotspots):
 	'''
 	
 	hs_names, targets = [], [] # Init lists to store hotspot names & target data
-		for hs in hotspots: # Iterate hotspots & scrape data
-			targets, name = parseTargets(session, hs, targets)
-			if name: # Don't add empty hotspots to the list
-				hs_names.append(name)
+	for hs in hotspots: # Iterate hotspots & scrape data
+		targets, name = parseTargets(session, hs, targets)
+		if name: # Don't add empty hotspots to the list
+			hs_names.append(name)
 	return hs_names, targtes
 
 def buildTargetsURL(hs, bmo, emo, reg, list):
