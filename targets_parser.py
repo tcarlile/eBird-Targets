@@ -51,7 +51,7 @@ def parseTargets(session, hs, targets):
 		for section in soup.find_all('section', {'aria-labelledby' : label } ):
 			for target in section.find_all('li'): # Find all species, <li> element per spuh, iterate, parse
 				elem = target.find('div', {'class' : 'SpecimenHeader'})
-				if elem.find('em', {'class' : 'sci'}) # find() yields bs4.element.Tag if Common + Sci displayed
+				if elem.find('em', {'class' : 'sci'}): # find() yields bs4.element.Tag if Common + Sci displayed
 					elem.find('em', {'class' : 'sci'}).decompose() # Remove scientific name
 				else: # If user has Common name displayed find() yields NoneType
 					pass
