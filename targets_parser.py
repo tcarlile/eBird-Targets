@@ -24,7 +24,7 @@ def getHotspots(fn):
 		cfg: a dict of config file parameters
 	'''
 	with open(fn) as f:
-	hotspots = [line.strip() for line in f]
+		hotspots = [line.strip() for line in f]
 	return hotspots
 	
 def getMdVal(soup):
