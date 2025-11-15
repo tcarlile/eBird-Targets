@@ -234,9 +234,9 @@ def writeURLs(cfg, url_df):
 	'''
 	'''
 	with open(cfg['filebase']+'_study_guide.html', 'w') as f:
-	f.write('<!DOCTYPE html>\n<html>\n<head>\n<title>eBird Study Guide</title>\n</head>\n')
-	for i, row in url_df.iterrows():
-		f.write('<div><a href=\"'+row.iloc[0]+'\">'+i+'</a></div>\n')
+		f.write('<!DOCTYPE html>\n<html>\n<head>\n<title>eBird Study Guide</title>\n</head>\n')
+		for i, row in url_df.iterrows():
+			f.write('<div><a href=\"'+row.iloc[0]+'\">'+i+'</a></div>\n')
 	
 def main():
 	
