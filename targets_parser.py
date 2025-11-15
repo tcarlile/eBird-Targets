@@ -249,7 +249,7 @@ def main():
 	taxonomy = readTaxonomy(cfg) # Read taxonomy csv used by eBird
 	targ_df, url_df = processTargData(cfg, targets, hs_names, taxonomy)
 	writeExcel(cfg, targ_df)
-	writeURLs(url_df)
+	writeURLs(cfg, url_df)
         		
 if __name__ == '__main__':
 	main()
