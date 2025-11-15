@@ -175,6 +175,8 @@ def writeExcel(cfg, df):
 	'''
 	'''
 
+	df.to_csv(cfg['filebase']+'_targets.csv') # Write to CSV first
+	
 	writer = pd.ExcelWriter(cfg['filebase']+'_targets.xlsx', engine='xlsxwriter') # Create excel file
 	#TODO pass header=False
 	name = cfg['filebase']+' Targets' # Sheet name
@@ -228,6 +230,14 @@ def writeExcel(cfg, df):
 	worksheet.set_row(0, 80)
 	writer.close()
 
+def writeURLs(cfg, url_df)
+	'''
+	'''
+	with open(cfg['filebase']+'_study_guide.html', 'w') as f:
+	f.write('<!DOCTYPE html>\n<html>\n<head>\n<title>eBird Study Guide</title>\n</head>\n')
+	for i, row in url_df.iterrows():
+		f.write('<div><a href=\"'+row.iloc[0]+'\">'+i+'</a></div>\n')
+	
 def main():
 	
 	cfg = getConfig('ebird.cfg') # !!!Read config file, your password is read here. See function above !!!
@@ -238,46 +248,8 @@ def main():
 
 	taxonomy = readTaxonomy(cfg) # Read taxonomy csv used by eBird
 	targ_df, url_df = processTargData(cfg, targets, hs_names, taxonomy)
-	
-	#Create longform dataframe, and do some formatting
-	#targets_df = pd.DataFrame(targets, columns=['Species', 'Frequency', 'URL', 'Hotspot'])
-	#targets_df['Frequency'] = pd.to_numeric(targets_df['Frequency'])
-	
-	#Create dataframe for storing URLS, will tweak a bit later
-	#url_df = targets_df.drop(labels=['Frequency','Hotspot'], axis=1)
-	#url_df.drop_duplicates(inplace=True)
-	
-	#targets_df = targets_df.pivot(index='Species', columns='Hotspot', values='Frequency')
-	#targets_df = targets_df[hs_names] #Reorder columns
-	#targets_df.fillna(value=0, inplace=True) # replace NaNs
-	#targets_df['Max Freq'] = targets_df[hs_names].max(axis=1) # Get maximum freq
-	#targets_df = targets_df[targets_df['Max Freq'] >= float(cfg['cutoff'])]
-	#targets_df = targets_df.reset_index()
-	
-	# Import & clean Clements /eBird taxonomy
-	#taxonomy = pd.read_csv(cfg['taxonomy'])
-	#taxonomy = taxonomy[[cfg['taxsort'], cfg['speccol']]]
-	#taxonomy.drop_duplicates(subset=[cfg['speccol']], inplace=True)
-	#taxonomy = taxonomy[taxonomy[cfg['speccol']].notna()]
-	
-	# Incorporate taxonomy into targets, sort, clean
-	#targets_df['Tax Sort'] = targets_df['Species'].map(taxonomy.set_index([cfg['speccol']])[cfg['taxsort']])
-	#targets_df.sort_values(by='Tax Sort', inplace=True)
-	#targets_df.set_index('Species', inplace=True)
-	
-	# Sort URLs taxonomically
-	#url_df['Tax Sort'] = url_df['Species'].map(taxonomy.set_index([cfg['speccol']])[cfg['taxsort']])
-	#url_df.sort_values(by='Tax Sort', inplace=True)
-	#url_df.set_index('Species', inplace=True)
-	
-	#write urls to html file for study
-	with open(cfg['filebase']+'_study_guide.html', 'w') as f:
-		f.write('<!DOCTYPE html>\n<html>\n<head>\n<title>eBird Study Guide</title>\n</head>\n')
-		for i, row in url_df.iterrows():
-			f.write('<div><a href=\"'+row.iloc[0]+'\">'+i+'</a></div>\n')
-	
-	writeExcel(cfg, targets_df)
-	targets_df.to_csv(cfg['filebase']+'_targets.csv')
+	writeExcel(cfg, targ_df)
+	writeURLs(url_df)
         		
 if __name__ == '__main__':
 	main()
