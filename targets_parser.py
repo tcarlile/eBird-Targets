@@ -2,6 +2,30 @@ from bs4 import BeautifulSoup
 import time, requests, configparser, csv, xlsxwriter
 import pandas as pd
 
+def getConfig(fn):
+	'''
+	Expects:
+		fn: A string specifying the config filename
+	Returns:
+		cfg: a dict of ebird.cfg parameters
+	'''
+	# Read config file & hotspot file
+	config = configparser.RawConfigParser()
+	config.read(fn) # !!!Reads your password here!!!
+	cfg = dict(config.items('ebird-config')) # !!!Stores password in cfg['pw'] varaible!!!
+	return cfg # !!!Returns cfg varaible to main()!!!
+
+def getHotspots(fn):
+	'''
+	Expects:
+		fn: A string specifying the hotspots filename
+	Returns:
+		cfg: a dict of ebird.cfg parameters
+	'''
+	with open(fn) as f:
+		hotspots = [line.strip() for line in f]
+	return hotspots
+	
 def getMdVal(soup):
 	'''
 	Expects
@@ -13,70 +37,154 @@ def getMdVal(soup):
 	mdval = mdlog['value'] # Get the value parameter 
 	return mdval
 
-def buildTargetsURL(hs, bmo, emo, reg, list):
-	'''
-	Expects: elements of an eBird targets page URL, all str()
-		hs: eBird Hotspot ID (Or Region ID)
-		bmo, Beginning month of target period (1-12)
-		emo, Ending month of target period (1-12)
-		reg, Region for target list: "life" or hotspot ID/region ID
-		list, target period for list, "life", "year", "month", "day"	
-	Returns:
-		hsurl: an eBird targets page URL	
-	
-	'''
-	hsurl = 'https://ebird.org/targets?' + '&r1=' + hs + \
-			'&bmo=' + bmo + '&emo=' + emo + \
-			'&r2=' + reg + '&t2=' + list
-	return hsurl
-
-def parseTargets(session, hs, targets):
+def ebirdLogin(cfg):
 	'''
 	Expects:
+		cfg: a dict of ebird.cfg parameters
+	Returns
+		session: A session object logged ito your ebird account
+	'''
+	ebirdURL = 'https://secure.birds.cornell.edu/cassso/login?service=https%3A%2F%2Febird.org%2Flogin%2Fcas%3Fportal%3Debird&locale=en'
+
+	session = requests.session()
+	response = session.get(ebirdURL) # Load logon page
+	mdval = getMdVal(BeautifulSoup(response.text, 'html.parser')) #Get hidden data package
+	data = {'locale' : 'en',
+			'username' : cfg['user'],
+			'password' : cfg['pw'], # !!!Here's your Password!!!
+			'rememberMe' : 'on',
+			'execution' : mdval,
+			'_eventId' : 'submit'} 
+	r_post = session.post(ebirdURL, data=data) # !!!Here's where your password is used to log into eBird!!!
+	return session
+
+def parseHotspots(cfg, session, hotspots):
+	''''
+	Expects:
+		cfg: a dict of ebird.cfg parameters
+		session: A logged in eBird session object
+		hotspots: A list f hotspot IDs
+	Returns:
+		hs_names: A list of hotspot names
+		targets: A list with parsed targets data across hotspots
+				data includes [species name, frequency, eBird species URL]	
+	'''
+	
+	hs_names, targets = [], [] # Init lists to store hotspot names & target data
+	for hs in hotspots: # Iterate hotspots & scrape data
+		targets, name = parseTargets(cfg, session, hs, targets)
+		if name: # Don't add empty hotspots to the list
+			hs_names.append(name)
+	return hs_names, targets
+
+def parseTargets(cfg, session, hs, targets):
+	'''
+	Expects:
+		cfg: a dict of ebird.cfg parameters
 		session: A logged in eBird requests session
 		hs: An eBird Hotspot ID, found in hotsot URL, (e.g. L2284561)
 		targets: A list of lists
 	Returns:
 		targets: An expanded list with parsed targets data table appended as lines
-			data includes [index, species name, frequency, eBird species URL]		
+			data includes [species name, frequency, eBird species URL]		
 	'''
 	
-	targURL = buildTargetsURL(hs, cfg['bmo'], cfg['emo'], cfg['reg'], cfg['list'])
+	targURL = 'https://ebird.org/targets?' + '&r1=' + hs + '&bmo=' + cfg['bmo'] + \
+			'&emo=' + cfg['emo'] + '&r2=' + cfg['reg'] + '&t2=' + cfg['list'] # Build URL for targets page
 	hotspot = session.get(targURL) # Load hotspots target page
-	soup = BeautifulSoup(hotspot.text, 'html.parser')
-	targLen = len(targets) # Length of targets list before parsing hotspot
+	soup = BeautifulSoup(hotspot.text, 'html.parser') 
 	
+	targLen = len(targets) # Length of targets list before parsing hotspot
 	name = soup.find('option', {'value' : hs }).getText() # Parse hotspot name from region selection box
 	for label in ['native-and-naturalized', 'exotic-provisional']: # Only parse what eBird includes in life list
 		for section in soup.find_all('section', {'aria-labelledby' : label } ):
-			for target in section.find_all('li'): # Find all species, <li> element per spuh, iterate, parse
-				elem = target.find('div', {'class' : 'SpecimenHeader'})
-				try: # If user has Common + Scentific displayed find() yields bs4.element.Tag 
+			for target in section.find_all('li'): # Find all species, defined by <li> elements
+				elem = target.find('div', {'class' : 'SpecimenHeader'}) # Species header
+				if elem.find('em', {'class' : 'sci'}): # find() yields bs4.element.Tag if Common + Sci displayed
 					elem.find('em', {'class' : 'sci'}).decompose() # Remove scientific name
-				except: # If user has Common name displayed find() yields NoneType
+				else: # If user has Common name displayed find() yields NoneType
 					pass
 				# Only psychopaths would use the Scientific name only setting, so I'm not going to deal with that
-				urls = 'https://ebird.org/species/'+elem.find('a').get('data-species-code')
-				spuh = elem.getText().strip()
-				freq = target.find('div', {'class' : 'ResultsStats-stats'}).get('title').strip('.% frequency')
+				urls = 'https://ebird.org/species/'+elem.find('a').get('data-species-code') # Get eBird species code
+				spuh = elem.getText().strip() # Get species common name
+				freq = target.find('div', {'class' : 'ResultsStats-stats'}).get('title').strip('.% frequency') # Get frequency
 				targets.append([spuh,freq,urls,name])
 	print('Parsed ' + name)
 	time.sleep(4) # To limit rate of eBird page loads 
 	if targLen == len(targets): # Occurs when target species data is empty
-		name = None # Change hotspot name to None
+		name = None # Change hotspot name to None, used as check in parseHotspots()
 	return targets, name
 
-def writeExcel(df):
+def readTaxonomy(cfg):
 	'''
+	Expects:
+		cfg: a dict of ebird.cfg parameters
+	Returns:
+		taxonomy: a pandas df containing a cleaned version of the taxonomy file
+	'''
+	# Import & clean Clements /eBird taxonomy
+	taxonomy = pd.read_csv(cfg['taxonomy'])
+	taxonomy = taxonomy[[cfg['taxsort'], cfg['speccol']]] # Subset to sort column and species name column
+	taxonomy.drop_duplicates(subset=[cfg['speccol']], inplace=True)
+	taxonomy = taxonomy[taxonomy[cfg['speccol']].notna()]
+	return taxonomy
+	
+def processTargData(cfg, targets, hs_names, taxonomy):
+	'''
+	Expects:
+		cfg: a dict of ebird.cfg parameters
+		targets: A list of lists
+		hs_names: A list of hotspot names
+		taxonomy: A pandas data frame parsed from the eBird taxonomy file
+	Returns:
+		targets_df: a pandas data frame of species x hotspot frequencies
+		url_df: a pandas data frame of unique species URLS sorted taxonomically
+	'''
+	
+	#Create longform dataframe, and do some formatting
+	targets_df = pd.DataFrame(targets, columns=['Species', 'Frequency', 'URL', 'Hotspot'])
+	targets_df['Frequency'] = pd.to_numeric(targets_df['Frequency'])
+	
+	#Create dataframe for storing URLS, will tweak a bit later
+	url_df = targets_df.drop(labels=['Frequency','Hotspot'], axis=1)
+	url_df.drop_duplicates(inplace=True)
+	
+	targets_df = targets_df.pivot(index='Species', columns='Hotspot', values='Frequency') # Pivot from logform to species x hotspot
+	targets_df = targets_df[hs_names] #Reorder columns by ordered
+	targets_df.fillna(value=0, inplace=True) # replace NaNs
+	targets_df['Max Freq'] = targets_df[hs_names].max(axis=1) # Get maximum freq
+	targets_df = targets_df[targets_df['Max Freq'] >= float(cfg['cutoff'])] # Filter species rows below cutoff
+	targets_df = targets_df.reset_index()
+	
+	# Incorporate taxonomy into targets, sort, clean
+	targets_df['Tax Sort'] = targets_df['Species'].map(taxonomy.set_index([cfg['speccol']])[cfg['taxsort']])
+	targets_df.sort_values(by='Tax Sort', inplace=True)
+	targets_df.set_index('Species', inplace=True)
+	
+	# Sort URLs taxonomically
+	url_df['Tax Sort'] = url_df['Species'].map(taxonomy.set_index([cfg['speccol']])[cfg['taxsort']])
+	url_df.sort_values(by='Tax Sort', inplace=True)
+	url_df.set_index('Species', inplace=True)
+	
+	return targets_df, url_df
+	
+def writeExcel(cfg, df):
+	'''
+	Expects:
+		cfg: a dict of ebird.cfg parameters
+		df: a longform pandas data frame of ebird targets data
+	Does:
+		df is used to write an HTML file
 	'''
 
+	df.to_csv(cfg['filebase']+'_targets.csv') # Write to CSV first
+	
 	writer = pd.ExcelWriter(cfg['filebase']+'_targets.xlsx', engine='xlsxwriter') # Create excel file
-	#TODO pass header=False
 	name = cfg['filebase']+' Targets' # Sheet name
 	df = df.round(decimals=1)
 	df.to_excel(writer, sheet_name=name) # Write data
 	
-	# Get workbook, worksheet, and dimensions for forattinf 
+	# Get workbook, worksheet, and dimensions for formatting
 	workbook = writer.book
 	worksheet = writer.sheets[name]
 	ncol, nrow = worksheet.dim_colmax, worksheet.dim_rowmax
@@ -106,15 +214,16 @@ def writeExcel(df):
 	data_format = workbook.add_format({'border': 1, 'bold': True, 'font_size': 14 })
 	worksheet.set_column(1, ncol, 15, cell_format=data_format)
 
-	# Format header row in really annoying way because pandas enforces header format
+	# Define hotspot & species formats
 	hs_format = workbook.add_format({'bold': True, 'text_wrap': True, 'valign': 'vcenter', 
 									'align': 'center', 'border': 1, 'font_size': 15 })
-	# TODO REPLACE ITERATION WITH bulk format
+	sp_format = workbook.add_format({'bold': True, 'align': 'right', 'border': 1, 'font_size': 15 })
+
+	# Write formats by rewriting original data into cells with formatting
+	# Really annoying method, but is recommended in xlsxwriter docs
+	# May be a better way, but want to maintain compatibility with multiple pd vers
 	for i, value in enumerate(df.columns.values):
 		worksheet.write(0, i + 1, value, hs_format)
-	
-	# Format indexes row in really annoying way because pandas enforces col1 formats
-	sp_format = workbook.add_format({'bold': True, 'align': 'right', 'border': 1, 'font_size': 15 })
 	for i, (idx, row) in enumerate(df.iterrows()):
 		worksheet.write(i+1, 0 , idx, sp_format)
 	
@@ -123,77 +232,33 @@ def writeExcel(df):
 	worksheet.set_row(0, 80)
 	writer.close()
 
-def main():
-	
-	# Read config file & hotspot file
-	global cfg
-	config = configparser.RawConfigParser()
-	config.read('ebird.cfg')
-	cfg = dict(config.items('ebird-config'))
-	with open(cfg['hotspots']) as f:
-		hotspots = [line.strip() for line in f]
-	
-	# eBird login URL
-	login = 'https://secure.birds.cornell.edu/cassso/login?service=https%3A%2F%2Febird.org%2Flogin%2Fcas%3Fportal%3Debird&locale=en'
-	with requests.session() as session: # Open session
-		response = session.get(login) # Load logon page
-		mdval = getMdVal(BeautifulSoup(response.text, 'html.parser')) #Get hidden data package
-		# Data package for logon
-		# If you're interested in how your password is used cfg['pw'] is the variable of interest,
-		# It's only sent to the eBird login website in the session.post command below
-		data = {'locale' : 'en',
-				'username' : cfg['user'],
-				'password' : cfg['pw'],
-				'rememberMe' : 'on',
-				'execution' : mdval,
-				'_eventId' : 'submit'} 
-		r_post = session.post(login, data=data) # Submit login data
-		
-		hs_names, targets = [], [] # Init lists to store hotspot names & target data
-		for hs in hotspots: # Iterate hotspots & scrape data
-			targets, name = parseTargets(session, hs, targets)
-			if name != None: # Don't add empty hotspots to the list
-				hs_names.append(name)
-				
-	#Create longform dataframe, and do some formatting
-	targets_df = pd.DataFrame(targets, columns=['Species', 'Frequency', 'URL', 'Hotspot'])
-	targets_df['Frequency'] = pd.to_numeric(targets_df['Frequency'])
-	
-	#Create dataframe for storing URLS, will tweak a bit later
-	url_df = targets_df.drop(labels=['Frequency','Hotspot'], axis=1)
-	url_df.drop_duplicates(inplace=True)
-	
-	targets_df = targets_df.pivot(index='Species', columns='Hotspot', values='Frequency')
-	targets_df = targets_df[hs_names] #Reorder columns
-	targets_df.fillna(value=0, inplace=True) # replace NaNs
-	targets_df['Max Freq'] = targets_df[hs_names].max(axis=1) # Get maximum freq
-	targets_df = targets_df[targets_df['Max Freq'] >= float(cfg['cutoff'])]
-	targets_df = targets_df.reset_index()
-	
-	# Import & clean Clements /eBird taxonomy
-	taxonomy = pd.read_csv(cfg['taxonomy'])
-	taxonomy = taxonomy[[cfg['taxsort'], cfg['speccol']]]
-	taxonomy.drop_duplicates(subset=[cfg['speccol']], inplace=True)
-	taxonomy = taxonomy[taxonomy[cfg['speccol']].notna()]
-	
-	# Incorporate taxonomy into targets, sort, clean
-	targets_df['Tax Sort'] = targets_df['Species'].map(taxonomy.set_index([cfg['speccol']])[cfg['taxsort']])
-	targets_df.sort_values(by='Tax Sort', inplace=True)
-	targets_df.set_index('Species', inplace=True)
-	
-	# Sort URLs taxonomically
-	url_df['Tax Sort'] = url_df['Species'].map(taxonomy.set_index([cfg['speccol']])[cfg['taxsort']])
-	url_df.sort_values(by='Tax Sort', inplace=True)
-	url_df.set_index('Species', inplace=True)
-	
-	#write urls to html file for study
+def writeURLs(cfg, df):
+	'''
+	Expects:
+		cfg: a dict of ebird.cfg parameters
+		df: a pandas dataframe of species URLs
+	Does:
+		df is written to excel and formatted
+	'''
 	with open(cfg['filebase']+'_study_guide.html', 'w') as f:
 		f.write('<!DOCTYPE html>\n<html>\n<head>\n<title>eBird Study Guide</title>\n</head>\n')
-		for i, row in url_df.iterrows():
+		for i, row in df.iterrows():
 			f.write('<div><a href=\"'+row.iloc[0]+'\">'+i+'</a></div>\n')
 	
-	writeExcel(targets_df)
-	targets_df.to_csv(cfg['filebase']+'_targets.csv')
+def main():
+	
+	cfg = getConfig('ebird.cfg') # !!!Read config file, your password is read here. See function above !!!
+	hotspots = getHotspots(cfg['hotspots']) # Read hotspots file
+	session = ebirdLogin(cfg) # !!!Login to eBird, your password is used to login to eBird. See function above!!!
+	del cfg['pw'] # !!!Delete your password from cfg so you don't have to look through code for rest of subfunctions!!!
+	del cfg['user'] # !!!Delete your password from cfg so you don't have to look through code for rest of subfunctions!!!
+	hs_names, targets = parseHotspots(cfg, session, hotspots) # Visits hotspot targets pages and parses data
+	session.close()
+
+	taxonomy = readTaxonomy(cfg) # Read taxonomy csv used by eBird
+	targ_df, url_df = processTargData(cfg, targets, hs_names, taxonomy) # Use pandas to wrangle data into tables for output
+	writeExcel(cfg, targ_df)
+	writeURLs(cfg, url_df)
         		
 if __name__ == '__main__':
 	main()
