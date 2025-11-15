@@ -96,7 +96,7 @@ The 2025 taxonomy downloads page, and a direct link to the relevant 2025 taxonom
 Updates to the eBird website will require more significant updates. eBird's 2024 style update required rewriting the code that parses the targets table HTML. Hopefully, the current eBird style will be stable for a few years.
 
 ## Dependencies
-This script requires python3 with pandas, BeautifulSoup, requests, csv, and xlsxwriter. The range of versions I've test are listed below. It's unlikely that this exact configuration is needed, but earlier versions of *some* packages might not work. The included enviroment.yaml file can be used to build this conda environment.
+This script requires python3 with pandas, BeautifulSoup, requests, csv, and xlsxwriter. The range of versions I've test are listed below. It's unlikely that this exact configuration is needed, but earlier versions of *some* packages might not work. The included enviroment.yml file can be used to build this conda environment.
 - python3 [3.9.12] - [3.13.5]
 - pandas [1.4.2] - [2.3.1]
 - bs4 [4.11.1] - [4.13.4]
