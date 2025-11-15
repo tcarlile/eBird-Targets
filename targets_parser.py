@@ -49,8 +49,6 @@ def ebirdLogin(cfg):
 	session = requests.session()
 	response = session.get(ebirdURL) # Load logon page
 	mdval = getMdVal(BeautifulSoup(response.text, 'html.parser')) #Get hidden data package
-	# If you're interested in how your password is used cfg['pw'] is the variable of interest,
-	# It's only sent to the eBird login website in the session.post command below
 	data = {'locale' : 'en',
 			'username' : cfg['user'],
 			'password' : cfg['pw'], # !!!Here's your Password!!!
@@ -97,7 +95,6 @@ def parseTargets(cfg, session, hs, targets):
 	soup = BeautifulSoup(hotspot.text, 'html.parser') 
 	
 	targLen = len(targets) # Length of targets list before parsing hotspot
-	
 	name = soup.find('option', {'value' : hs }).getText() # Parse hotspot name from region selection box
 	for label in ['native-and-naturalized', 'exotic-provisional']: # Only parse what eBird includes in life list
 		for section in soup.find_all('section', {'aria-labelledby' : label } ):
@@ -109,7 +106,7 @@ def parseTargets(cfg, session, hs, targets):
 					pass
 				# Only psychopaths would use the Scientific name only setting, so I'm not going to deal with that
 				urls = 'https://ebird.org/species/'+elem.find('a').get('data-species-code') # Get eBird species code
-				spuh = elem.getText().strip() # Get species EN US Common Name
+				spuh = elem.getText().strip() # Get species common name
 				freq = target.find('div', {'class' : 'ResultsStats-stats'}).get('title').strip('.% frequency') # Get frequency
 				targets.append([spuh,freq,urls,name])
 	print('Parsed ' + name)
@@ -183,7 +180,6 @@ def writeExcel(cfg, df):
 	df.to_csv(cfg['filebase']+'_targets.csv') # Write to CSV first
 	
 	writer = pd.ExcelWriter(cfg['filebase']+'_targets.xlsx', engine='xlsxwriter') # Create excel file
-	#TODO pass header=False
 	name = cfg['filebase']+' Targets' # Sheet name
 	df = df.round(decimals=1)
 	df.to_excel(writer, sheet_name=name) # Write data
@@ -218,15 +214,16 @@ def writeExcel(cfg, df):
 	data_format = workbook.add_format({'border': 1, 'bold': True, 'font_size': 14 })
 	worksheet.set_column(1, ncol, 15, cell_format=data_format)
 
-	# Format header row in really annoying way because pandas enforces header format
+	# Define hotspot & species formats
 	hs_format = workbook.add_format({'bold': True, 'text_wrap': True, 'valign': 'vcenter', 
 									'align': 'center', 'border': 1, 'font_size': 15 })
-	# TODO REPLACE ITERATION WITH bulk format
+	sp_format = workbook.add_format({'bold': True, 'align': 'right', 'border': 1, 'font_size': 15 })
+
+	# Write formats by rewriting original data into cells with formatting
+	# Really annoying method, but is recommended in xlsxwriter docs
+	# May be a better way, but want to maintain compatibility with multiple pd vers
 	for i, value in enumerate(df.columns.values):
 		worksheet.write(0, i + 1, value, hs_format)
-	
-	# Format indexes row in really annoying way because pandas enforces col1 formats
-	sp_format = workbook.add_format({'bold': True, 'align': 'right', 'border': 1, 'font_size': 15 })
 	for i, (idx, row) in enumerate(df.iterrows()):
 		worksheet.write(i+1, 0 , idx, sp_format)
 	
