@@ -10,7 +10,7 @@ Starting with a text file containing eBird Hotspot (or region) IDs of interest a
 - Output a crude "Study Guide." At the moment, just an HTML file with links to eBird species accounts
 
 ## This Script Uses Your eBird Username and Password
-In order to get data relevant to you, the script needs to login to your ebird account. As written the script ***reads your eBird usename and password from the config file stored in plain text on your computer*** and uses these to log into ebird. I've tried to explicitly document where and how your password is used in the code (please take a look).
+In order to get data relevant to you, the script needs to login to your ebird account. As written, the script ***reads your eBird usename and password from the config file stored in plain text on your computer*** and uses these to log into ebird. I've tried to explicitly document where and how your password is used in the code (please take a look).
   - All lines where your password is read, stored, or used are commented as follow ```#!!!Description of password use!!!```
   - Your password is read from the cfg file using ```getConfig()```: lines ```5-16```, funtion call line ```250```
   - Your password is used to login to ebird using ```ebirdLogin()```: lines ```40-61```, function call line ```252```
