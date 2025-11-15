@@ -230,7 +230,7 @@ def writeExcel(cfg, df):
 	worksheet.set_row(0, 80)
 	writer.close()
 
-def writeURLs(cfg, url_df)
+def writeURLs(cfg, url_df):
 	'''
 	'''
 	with open(cfg['filebase']+'_study_guide.html', 'w') as f:
