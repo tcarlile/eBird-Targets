@@ -177,7 +177,7 @@ def writeExcel(cfg, df):
 		cfg: a dict of ebird.cfg parameters
 		df: a longform pandas data frame of ebird targets data
 	Does:
-		df is written to excel and formatted
+		df is used to write an HTML file
 	'''
 
 	df.to_csv(cfg['filebase']+'_targets.csv') # Write to CSV first
