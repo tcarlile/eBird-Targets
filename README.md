@@ -1,7 +1,7 @@
 # 🐦 eBird-Targets 🐦
-I wrote this script to help prepare for a birding trip to South & West Texas. I had several shared eBird trip reports, which while incredibly helpful, were difficult to browse systematically. I wanted to synthesize some of this information to 1) find target species to study, 2) plan daily trip agendas, and 3) inform decision making on the fly in the field. A trip to Costa Rica prompted a rewrite to streamline code and eliminate most manual steps.
+I wrote this script to help prepare for a trip to South & West Texas. I had several eBird trip reports from other birders. While incredibly helpful, these were difficult to browse systematically. I wanted to synthesize some of this information to 1) find target species to study, 2) help plan daily trip agendas, and 3) inform decision making in the field. A trip to Costa Rica prompted a rewrite to streamline code and eliminate most manual steps.
 
-You'll need to do some research first. I can't automate that part! Primarily this is figuring out what hotspots you're interested in. The eBird hotspots map and other birders are helpful for this bit. Once you have a list of hotspots, you're ready to go. The script will summarize the target species across hotspots of interest.
+You'll need to do some research first. Primarily this is figuring out what hotspots you're interested in. The eBird hotspots map and other birders are helpful for this bit. Once you have a list of hotspots, you're ready to go. The script will summarize target species across hotspots of interest.
 
 ## Highlights
 Starting with a text file containing eBird Hotspot (or region) IDs of interest and a configuration file, this script will: 
@@ -9,7 +9,15 @@ Starting with a text file containing eBird Hotspot (or region) IDs of interest a
 - Output an Excel file with a Species x Hotspot table, taxonomically sorted, and color coded by frequency
 - Output a crude "Study Guide." At the moment, just an HTML file with links to eBird species accounts
 
-## Details & Caveats
+## This Script Uses Your eBird Username and Password
+In order to get data relevant to you, the script needs to login to your ebird account. As written the script ***reads your eBird usename and password from the config file stored in plain text on your computer*** and uses these to log into ebird. I've tried to explicitly document where and how your password is used in the code (please take a look).
+  - All lines where your password is read, stored, or used are commented as follow ```#!!!Description of password use!!!```
+  - Your password is read from the cfg file using ```getConfig()```: lines ```5-16```, funtion call line ```250```
+  - Your password is used to login to ebird using ```ebirdLogin()```: lines ```40-61```, function call line ```252```
+  - Your usename and password are deleted from the ```cfg``` variable after data has been collected (lines ```253-254```) so you don't have to look through the rest of the functions.
+  - If you're paranoid you should remove the password from ```ebird.cfg``` after running the script.
+
+## Details
 **A few notes about the output:**
 - The script parses "eBird lifers", so both "Native & Naturalized" and "Exotic: Provisional" are included in the output.
 - The Excel file contains:
@@ -25,12 +33,7 @@ Starting with a text file containing eBird Hotspot (or region) IDs of interest a
 - The "Study Guide" is just an unformatted html file with a taxonomically sorted list of links to eBird species accounts.
   
 **Some important notes, caveats, and limitations:**
-- The script ***reads your eBird password from the config file stored in plain text on your computer***.
-  - If you're paranoid you should remove the password from ```ebird.cfg``` after running the script.
-  - Your passwrod is read from the cfg file, and is used to login to eBird using your account. Please examine the code before running.
-    - All lines where your password is read, stored, or used are commented as follow ```#!!!Description of password use!!!```
-    - Your password is read from the cfg file using ```getConfig()```: lines ```5-16```, funtion call line ```195```
-    - Your password is used to login to ebird using ```ebirdLogin()```: lines ```40-61```, function call line ```197``` 
+
 - Long staying and heavily twitched rarities can lead to spurious/unlikely targets. There were several of these for my Texas and Arizona trips. I suspect it's more of an issue in places that get tons of rarities. You may want to do some data cleaning if something looks unlikely. Examples:
   - A Surbird seen on South Padre Island for ~1.5 weeks in April 2023 showed up at ~9.9% frequency in the output for my Texas trip.
   - One might also think that the seldom birded Boston Area bike path near me would be a great place to see a wintertime Townsed's Warlber (66.5%!).
