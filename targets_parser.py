@@ -133,7 +133,7 @@ def parseTargets(cfg, session, hs, targets):
 		name = None # Change hotspot name to None, used as check in parseHotspots()
 	return targets, name
 
-def writeExcel(df):
+def writeExcel(cfg, df):
 	'''
 	'''
 
@@ -255,7 +255,7 @@ def main():
 		for i, row in url_df.iterrows():
 			f.write('<div><a href=\"'+row.iloc[0]+'\">'+i+'</a></div>\n')
 	
-	writeExcel(targets_df)
+	writeExcel(cfg, targets_df)
 	targets_df.to_csv(cfg['filebase']+'_targets.csv')
         		
 if __name__ == '__main__':
