@@ -7,7 +7,7 @@ def getConfig(fn):
 	Expects:
 		fn: A string specifying the config filename
 	Returns:
-		cfg: a dict of config file parameters
+		cfg: a dict of ebird.cfg parameters
 	'''
 	# Read config file & hotspot file
 	config = configparser.RawConfigParser()
@@ -20,7 +20,7 @@ def getHotspots(fn):
 	Expects:
 		fn: A string specifying the hotspots filename
 	Returns:
-		cfg: a dict of config file parameters
+		cfg: a dict of ebird.cfg parameters
 	'''
 	with open(fn) as f:
 		hotspots = [line.strip() for line in f]
@@ -40,7 +40,7 @@ def getMdVal(soup):
 def ebirdLogin(cfg):
 	'''
 	Expects:
-		cfg: dict parsed from config file
+		cfg: a dict of ebird.cfg parameters
 	Returns
 		session: A session object logged ito your ebird account
 	'''
@@ -63,7 +63,7 @@ def ebirdLogin(cfg):
 def parseHotspots(cfg, session, hotspots):
 	''''
 	Expects:
-		cfg: A dict parsed from config file
+		cfg: a dict of ebird.cfg parameters
 		session: A logged in eBird session object
 		hotspots: A list f hotspot IDs
 	Returns:
@@ -82,7 +82,7 @@ def parseHotspots(cfg, session, hotspots):
 def parseTargets(cfg, session, hs, targets):
 	'''
 	Expects:
-		cfg: A dict parsed from config file
+		cfg: a dict of ebird.cfg parameters
 		session: A logged in eBird requests session
 		hs: An eBird Hotspot ID, found in hotsot URL, (e.g. L2284561)
 		targets: A list of lists
@@ -121,7 +121,7 @@ def parseTargets(cfg, session, hs, targets):
 def readTaxonomy(cfg):
 	'''
 	Expects:
-		cfg: a dict parsed from the config file
+		cfg: a dict of ebird.cfg parameters
 	Returns:
 		taxonomy: a pandas df containing a cleaned version of the taxonomy file
 	'''
@@ -135,7 +135,7 @@ def readTaxonomy(cfg):
 def processTargData(cfg, targets, hs_names, taxonomy):
 	'''
 	Expects:
-		cfg: A dict parsed from config file
+		cfg: a dict of ebird.cfg parameters
 		targets: A list of lists
 		hs_names: A list of hotspot names
 		taxonomy: A pandas data frame parsed from the eBird taxonomy file
@@ -173,6 +173,11 @@ def processTargData(cfg, targets, hs_names, taxonomy):
 	
 def writeExcel(cfg, df):
 	'''
+	Expects:
+		cfg: a dict of ebird.cfg parameters
+		df: a longform pandas data frame of ebird targets data
+	Does:
+		df is written to excel and formatted
 	'''
 
 	df.to_csv(cfg['filebase']+'_targets.csv') # Write to CSV first
@@ -230,12 +235,17 @@ def writeExcel(cfg, df):
 	worksheet.set_row(0, 80)
 	writer.close()
 
-def writeURLs(cfg, url_df):
+def writeURLs(cfg, df):
 	'''
+	Expects:
+		cfg: a dict of ebird.cfg parameters
+		df: a pandas dataframe of species URLs
+	Does:
+		df is written to excel and formatted
 	'''
 	with open(cfg['filebase']+'_study_guide.html', 'w') as f:
 		f.write('<!DOCTYPE html>\n<html>\n<head>\n<title>eBird Study Guide</title>\n</head>\n')
-		for i, row in url_df.iterrows():
+		for i, row in df.iterrows():
 			f.write('<div><a href=\"'+row.iloc[0]+'\">'+i+'</a></div>\n')
 	
 def main():
@@ -243,11 +253,12 @@ def main():
 	cfg = getConfig('ebird.cfg') # !!!Read config file, your password is read here. See function above !!!
 	hotspots = getHotspots(cfg['hotspots']) # Read hotspots file
 	session = ebirdLogin(cfg) # !!!Login to eBird, your password is used to login to eBird. See function above!!!
+	del cfg['pw'] # !!!Delete your password from cfg so you don't have to look through code for rest of subfunctions!!!
 	hs_names, targets = parseHotspots(cfg, session, hotspots) # Visits hotspot targets pages and parses data
 	session.close()
 
 	taxonomy = readTaxonomy(cfg) # Read taxonomy csv used by eBird
-	targ_df, url_df = processTargData(cfg, targets, hs_names, taxonomy)
+	targ_df, url_df = processTargData(cfg, targets, hs_names, taxonomy) # Use pandas to wrangle data into tables for output
 	writeExcel(cfg, targ_df)
 	writeURLs(cfg, url_df)
         		
