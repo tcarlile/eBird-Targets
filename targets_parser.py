@@ -251,6 +251,7 @@ def main():
 	hotspots = getHotspots(cfg['hotspots']) # Read hotspots file
 	session = ebirdLogin(cfg) # !!!Login to eBird, your password is used to login to eBird. See function above!!!
 	del cfg['pw'] # !!!Delete your password from cfg so you don't have to look through code for rest of subfunctions!!!
+	del cfg['user'] # !!!Delete your password from cfg so you don't have to look through code for rest of subfunctions!!!
 	hs_names, targets = parseHotspots(cfg, session, hotspots) # Visits hotspot targets pages and parses data
 	session.close()
 
