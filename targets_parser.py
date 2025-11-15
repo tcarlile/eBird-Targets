@@ -10,11 +10,10 @@ def getConfig(fn):
 		cfg: a dict of config file parameters
 	'''
 	# Read config file & hotspot file
-	global cfg
 	config = configparser.RawConfigParser()
-	config.read(fn)
-	cfg = dict(config.items('ebird-config'))
-	return cfg
+	config.read(fn) # !!!Reads your password here!!!
+	cfg = dict(config.items('ebird-config')) # !!!Stores password in cfg['pw'] varaible!!!
+	return cfg # !!!Returns cfg varaible to main()!!!
 
 def getHotspots(fn):
 	'''
@@ -38,8 +37,10 @@ def getMdVal(soup):
 	mdval = mdlog['value'] # Get the value parameter 
 	return mdval
 
-def ebirdLogin():
+def ebirdLogin(cfg):
 	'''
+	Expects:
+		cfg: dict parsed from config file
 	Returns
 		session: A session object logged ito your ebird account
 	'''
@@ -52,16 +53,17 @@ def ebirdLogin():
 	# It's only sent to the eBird login website in the session.post command below
 	data = {'locale' : 'en',
 			'username' : cfg['user'],
-			'password' : cfg['pw'], #Here's your Password!
+			'password' : cfg['pw'], # !!!Here's your Password!!!
 			'rememberMe' : 'on',
 			'execution' : mdval,
 			'_eventId' : 'submit'} 
-	r_post = session.post(ebirdURL, data=data) # Here's where it's used to log you into eBird
+	r_post = session.post(ebirdURL, data=data) # !!!Here's where your password is used to log into eBird!!!
 	return session
 
-def parseHotspots(session, hotspots):
+def parseHotspots(cfg, session, hotspots):
 	''''
 	Expects:
+		cfg: A dict parsed from config file
 		session: A logged in eBird session object
 		hotspots: A list f hotspot IDs
 	Returns:
@@ -72,10 +74,10 @@ def parseHotspots(session, hotspots):
 	
 	hs_names, targets = [], [] # Init lists to store hotspot names & target data
 	for hs in hotspots: # Iterate hotspots & scrape data
-		targets, name = parseTargets(session, hs, targets)
+		targets, name = parseTargets(cfg, session, hs, targets)
 		if name: # Don't add empty hotspots to the list
 			hs_names.append(name)
-	return hs_names, targtes
+	return hs_names, targets
 
 def buildTargetsURL(hs, bmo, emo, reg, list):
 	'''
@@ -92,9 +94,10 @@ def buildTargetsURL(hs, bmo, emo, reg, list):
 			'&bmo=' + bmo + '&emo=' + emo + '&r2=' + reg + '&t2=' + list
 	return hsurl
 
-def parseTargets(session, hs, targets):
+def parseTargets(cfg, session, hs, targets):
 	'''
 	Expects:
+		cfg: A dict parsed from config file
 		session: A logged in eBird requests session
 		hs: An eBird Hotspot ID, found in hotsot URL, (e.g. L2284561)
 		targets: A list of lists
@@ -103,7 +106,9 @@ def parseTargets(session, hs, targets):
 			data includes [species name, frequency, eBird species URL]		
 	'''
 	
-	targURL = buildTargetsURL(hs, cfg['bmo'], cfg['emo'], cfg['reg'], cfg['list'])
+	#targURL = buildTargetsURL(hs, cfg['bmo'], cfg['emo'], cfg['reg'], cfg['list'])
+	targURL = 'https://ebird.org/targets?' + '&r1=' + hs + '&bmo=' + cfg['bmo'] + \
+			'&emo=' + cfg['emo'] + '&r2=' + cfg['reg'] + '&t2=' + cfg['list']
 	hotspot = session.get(targURL) # Load hotspots target page
 	soup = BeautifulSoup(hotspot.text, 'html.parser')
 	targLen = len(targets) # Length of targets list before parsing hotspot
@@ -189,8 +194,8 @@ def main():
 	
 	cfg = getConfig('ebird.cfg') # Read config file
 	hotspots = getHotspots(cfg['hotspots']) # Read hotspots file
-	session = ebirdLogin() # Login to eBird
-	hs_names, targets = parseHotspots(session, hotspots)
+	session = ebirdLogin(cfg) # Login to eBird
+	hs_names, targets = parseHotspots(cfg, session, hotspots)
 	# eBird login URL
 	#login = 'https://secure.birds.cornell.edu/cassso/login?service=https%3A%2F%2Febird.org%2Flogin%2Fcas%3Fportal%3Debird&locale=en'
 	#with requests.session() as session: # Open session
