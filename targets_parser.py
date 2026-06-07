@@ -14,7 +14,8 @@ def getConfig(fn):
 	config = configparser.RawConfigParser()
 	config.read(fn) # !!!Reads your password here!!!
 	cfg = dict(config.items('ebird-config')) # !!!Stores password in cfg['pw'] variable!!!
-	cfg['outdir'] = cfg['filebase']+'_'+cfg['list']+'/'
+	cfg['filebase'] = cfg['filebase']+'_'+cfg['list']
+	cfg['outdir'] = cfg['filebase']+'/'
 	return cfg # !!!Returns cfg variable to main()!!!
 
 def getHotspots(fn):
