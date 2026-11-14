@@ -57,7 +57,7 @@ emo = 12
 reg = world
 list = life
 cutoff = 1.5
-taxonomy = eBird-Clements_v2025-integrated-checklist-October-2025.csv
+taxonomy = eBird-Clements_v2026_integrated-checklist-October-2026.csv
 taxsort = sort v2026
 speccol = English name
 ```
