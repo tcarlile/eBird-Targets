@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+from pathlib import Path
 import time, requests, configparser, csv, xlsxwriter
 import pandas as pd
 
@@ -12,15 +13,17 @@ def getConfig(fn):
 	# Read config file & hotspot file
 	config = configparser.RawConfigParser()
 	config.read(fn) # !!!Reads your password here!!!
-	cfg = dict(config.items('ebird-config')) # !!!Stores password in cfg['pw'] varaible!!!
-	return cfg # !!!Returns cfg varaible to main()!!!
+	cfg = dict(config.items('ebird-config')) # !!!Stores password in cfg['pw'] variable!!!
+	cfg['filebase'] = cfg['filebase']+'_'+cfg['list']
+	cfg['outdir'] = cfg['filebase']+'/'
+	return cfg # !!!Returns cfg variable to main()!!!
 
 def getHotspots(fn):
 	'''
 	Expects:
 		fn: A string specifying the hotspots filename
 	Returns:
-		cfg: a dict of ebird.cfg parameters
+		hotspots: a list of hotspot IDs
 	'''
 	with open(fn) as f:
 		hotspots = [line.strip() for line in f]
@@ -176,10 +179,10 @@ def writeExcel(cfg, df):
 	Does:
 		df is used to write an HTML file
 	'''
-
-	df.to_csv(cfg['filebase']+'_targets.csv') # Write to CSV first
 	
-	writer = pd.ExcelWriter(cfg['filebase']+'_targets.xlsx', engine='xlsxwriter') # Create excel file
+	df.to_csv(cfg['outdir']+cfg['filebase']+'_targets.csv') # Write to CSV first
+	
+	writer = pd.ExcelWriter(cfg['outdir']+cfg['filebase']+'_targets.xlsx', engine='xlsxwriter') # Create excel file
 	name = cfg['filebase']+' Targets' # Sheet name
 	df = df.round(decimals=1)
 	df.to_excel(writer, sheet_name=name) # Write data
@@ -221,7 +224,7 @@ def writeExcel(cfg, df):
 
 	# Write formats by rewriting original data into cells with formatting
 	# Really annoying method, but is recommended in xlsxwriter docs
-	# May be a better way, but want to maintain compatibility with multiple pd vers
+	# May be a better way, but want to maintain compatibility with multiple pd versions
 	for i, value in enumerate(df.columns.values):
 		worksheet.write(0, i + 1, value, hs_format)
 	for i, (idx, row) in enumerate(df.iterrows()):
@@ -240,7 +243,7 @@ def writeURLs(cfg, df):
 	Does:
 		df is written to excel and formatted
 	'''
-	with open(cfg['filebase']+'_study_guide.html', 'w') as f:
+	with open(cfg['outdir']+cfg['filebase']+'_study_guide.html', 'w') as f:
 		f.write('<!DOCTYPE html>\n<html>\n<head>\n<title>eBird Study Guide</title>\n</head>\n')
 		for i, row in df.iterrows():
 			f.write('<div><a href=\"'+row.iloc[0]+'\">'+i+'</a></div>\n')
@@ -248,6 +251,7 @@ def writeURLs(cfg, df):
 def main():
 	
 	cfg = getConfig('ebird.cfg') # !!!Read config file, your password is read here. See function above !!!
+	Path(cfg['outdir']).mkdir(exist_ok=True)
 	hotspots = getHotspots(cfg['hotspots']) # Read hotspots file
 	session = ebirdLogin(cfg) # !!!Login to eBird, your password is used to login to eBird. See function above!!!
 	del cfg['pw'] # !!!Delete your password from cfg so you don't have to look through code for rest of subfunctions!!!

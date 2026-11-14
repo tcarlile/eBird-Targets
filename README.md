@@ -1,5 +1,5 @@
 # 🐦 eBird-Targets 🐦
-I wrote this script to help prepare for a trip to South & West Texas. I had several eBird trip reports from other birders. While incredibly helpful, these were difficult to browse systematically. I wanted to synthesize some of this information to 1) find target species to study, 2) help plan daily trip agendas, and 3) inform decision making in the field. A trip to Costa Rica prompted a rewrite to streamline code and eliminate most manual steps.
+I wrote this script to help prepare for a trip to South & West Texas. I had several eBird trip reports from other birders. While incredibly helpful, these were difficult to browse systematically. I wanted to synthesize some of this information to 1) find target species to study, 2) help plan daily agendas, and 3) inform on the fly decision making in the field. A trip to Costa Rica prompted a rewrite to streamline code and eliminate most manual steps.
 
 You'll need to do some research first. Primarily this is figuring out what hotspots you're interested in. The eBird hotspots map and other birders are helpful for this bit. Once you have a list of hotspots, you're ready to go. The script will summarize target species across hotspots of interest.
 
@@ -10,7 +10,7 @@ Starting with a text file containing eBird Hotspot (or region) IDs of interest a
 - Output a crude "Study Guide." At the moment, just an HTML file with links to eBird species accounts
 
 ## This Script Uses Your eBird Username and Password
-In order to get data relevant to you, the script needs to login to your ebird account. As written, the script ***reads your eBird usename and password from the config file stored in plain text on your computer*** and uses these to log into ebird. I've tried to explicitly document where and how your password is used in the code (please take a look).
+Since eBird doesn't provide individual level API access, the script needs to login to your eBird account to get your targets. As written, the script ***reads your eBird usename and password from the config file stored in plain text on your computer*** and uses these to log into ebird. I've tried to explicitly document where and how your password is used in the code (please take a look).
   - All lines where your password is read, stored, or used are commented as follow ```#!!!Description of password use!!!```
   - Your password is read from the cfg file using ```getConfig()```: lines ```5-16```, funtion call line ```250```
   - Your password is used to login to ebird using ```ebirdLogin()```: lines ```40-61```, function call line ```252```
@@ -57,8 +57,8 @@ emo = 12
 reg = world
 list = life
 cutoff = 1.5
-taxonomy = eBird-Clements_v2025-integrated-checklist-October-2025.csv
-taxsort = sort v2025
+taxonomy = eBird-Clements_v2026_integrated-checklist-October-2026.csv
+taxsort = sort v2026
 speccol = English name
 ```
 
@@ -71,8 +71,8 @@ speccol = English name
 - ```reg = ``` The region list you want targets for. ```world``` specifies targets for your world list. Other options are the hotspot ID or region ID. 
 - ```list = ``` The list you want targets for, options are: ```life```, ```year```, ```month```, ```day```	 
 - ```cutoff = ``` A percent cutoff for filtering data. A cutoff of ```1.5``` means that if a species doesn't have a frequency of >= 1.5% in at least one of the hotspots, it will be filtered from the output data.
-- ```taxonomy = ``` The filename for the current Clements/eBird taxonomy csv file. For example, from Oct 2025 to Oct 2026 this would be ```eBird-Clements_v2025-integrated-checklist-October-2025.csv```.
-- ```taxsort = ``` The column header in the taxonomy csv file that specifies the taxonomic sort order (e.g. ```sort v2025```)
+- ```taxonomy = ``` The filename for the current Clements/eBird taxonomy csv file. For example, from Oct 2026 to Oct 2027 this would be ```eBird-Clements_v2026_integrated-checklist-October-2026.csv```.
+- ```taxsort = ``` The column header in the taxonomy csv file that specifies the taxonomic sort order (e.g. ```sort v2026```)
 - ```speccol = ``` The column header in the taxonomy csv file that specifies the species name (e.g. ```English name```)
 
 An example hotspots file from my Costa Rica trip. Each hotspot ID should be on its own line. The  top to bottom order of hotspots specifies the left to right order of columns in the output spreadsheet. I used colum ordering to organize in some way that makes sense for the trip. The file can have any name that you want, as long as it's specified in the ```ebird.cfg``` file:
@@ -89,9 +89,9 @@ L448041
 ## Updates
 eBird's yearly taxonomy update will require downloading the latest Clements/eBird checklist (and Avibase from 2026 onward) and changing the ```taxonomy``` and ```taxsort``` lines in the cfg file. I won't host these here, but will try to keep these links up to date.
 
-The 2025 taxonomy downloads page, and a direct link to the relevant 2025 taxonomy file are below.
-- [2025 Taxonomy Download Page](https://www.birds.cornell.edu/clementschecklist/introduction/updateindex/october-2025/2025-citation-checklist-downloads/)
-- [2025 Clements/eBird csv](https://www.birds.cornell.edu/clementschecklist/wp-content/uploads/2025/10/eBird-Clements_v2025-integrated-checklist-October-2025.csv)
+The 2026 taxonomy downloads page, and a direct link to the relevant 2025 taxonomy file are below.
+- [2026 Taxonomy Download Page](https://www.birds.cornell.edu/clementschecklist/introduction/updateindex/october-2025/2026-citation-checklist-downloads/)
+- [2026 eBird/Clements csv](https://www.birds.cornell.edu/clementschecklist/wp-content/uploads/2026/11/eBird-Clements_v2026_integrated-checklist-October-2026.csv)
 
 Updates to the eBird website will require more significant updates. eBird's 2024 style update required rewriting the code that parses the targets table HTML. Hopefully, the current eBird style will be stable for a few years.
 
