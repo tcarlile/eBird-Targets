@@ -58,6 +58,7 @@ reg = world
 list = life
 cutoff = 1.5
 taxonomy = eBird-Clements_v2026_integrated-checklist-October-2026.csv
+taxonomy_sha256 = ca63a4c93fe20f1ea6d073e6ff929c3d1f0b0ed7592839ecfce1ef296237a331
 taxsort = sort v2026
 speccol = English name
 ```
@@ -68,10 +69,11 @@ speccol = English name
 - ```filebase = ``` A prefix for the script's output files. If you're preparing for a trip to Costa Rica you might use a prefix of ```CostaRica```
 - ```bmo = ``` The beginning month of your time period of interest. Acceptable vales are ```1 - 12```
 - ```emo = ``` The ending month of your time period of interest. Acceptable vales are ```1 - 12```
-- ```reg = ``` The region list you want targets for. ```world``` specifies targets for your world list. Other options are the hotspot ID or region ID. 
+- ```reg = ``` The region list you want targets for. ```world``` specifies your world list. Other options are a country (e.g. ```US```), a state/province (e.g. ```US-MA```), or a county (e.g. ```US-MA-017```).
 - ```list = ``` The list you want targets for, options are: ```life```, ```year```, ```month```, ```day```	 
 - ```cutoff = ``` A percent cutoff for filtering data. A cutoff of ```1.5``` means that if a species doesn't have a frequency of >= 1.5% in at least one of the hotspots, it will be filtered from the output data.
-- ```taxonomy = ``` The filename for the current Clements/eBird taxonomy csv file. For example, from Oct 2026 to Oct 2027 this would be ```eBird-Clements_v2026_integrated-checklist-October-2026.csv```.
+- ```taxonomy = ``` The local filename for the Clements/eBird taxonomy CSV. Download the file from the link below and place it in the directory where you run the script.
+- ```taxonomy_sha256 = ``` The expected 64-character SHA-256 checksum for the taxonomy CSV. The script verifies the local file before parsing it.
 - ```taxsort = ``` The column header in the taxonomy csv file that specifies the taxonomic sort order (e.g. ```sort v2026```)
 - ```speccol = ``` The column header in the taxonomy csv file that specifies the species name (e.g. ```English name```)
 
@@ -87,7 +89,7 @@ L448041
 ```
 
 ## Updates
-eBird's yearly taxonomy update will require downloading the latest Clements/eBird checklist (and Avibase from 2026 onward) and changing the ```taxonomy``` and ```taxsort``` lines in the cfg file. I won't host these here, but will try to keep these links up to date.
+eBird's yearly taxonomy update will require downloading the latest Clements/eBird checklist and changing the ```taxonomy``` filename, ```taxonomy_sha256```, and ```taxsort``` value in the cfg file (and Avibase from 2026 onward). I won't host these here, but will try to keep these links up to date.
 
 The 2026 taxonomy downloads page, and a direct link to the relevant 2025 taxonomy file are below.
 - [2026 Taxonomy Download Page](https://www.birds.cornell.edu/clementschecklist/introduction/updateindex/october-2025/2026-citation-checklist-downloads/)
@@ -97,7 +99,7 @@ Updates to the eBird website will require more significant updates. eBird's 2024
 
 ## Dependencies
 This script requires python3 with pandas, BeautifulSoup, requests, csv, and xlsxwriter. The range of versions I've test are listed below. It's unlikely that this exact configuration is needed, but earlier versions of *some* packages might not work. The included enviroment.yml file can be used to build this conda environment.
-- python3 [3.9.12] - [3.13.5]
+- python3 [3.9.12] - [3.15.0]
 - pandas [1.4.2] - [2.3.1]
 - bs4 [4.11.1] - [4.13.4]
 - requests [2.27.1] - [2.32.4]
