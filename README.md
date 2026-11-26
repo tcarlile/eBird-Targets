@@ -7,14 +7,14 @@ You'll need to do some research first. Primarily this is figuring out what hotsp
 Starting with a text file containing eBird Hotspot (or region) IDs of interest and a configuration file, this script will: 
 - Logon to your eBird account, load the targets page for each hotspot, and parse the targets data
 - Output an Excel file with a Species x Hotspot table, taxonomically sorted, and color coded by frequency
-- Output a crude "Study Guide." At the moment, just an HTML file with links to eBird species accounts
+- Output a styled HTML "Study Guide" with links to eBird and Birdos of the World species accounts
 
 ## This Script Uses Your eBird Username and Password
-Since eBird doesn't provide individual level API access, the script needs to login to your eBird account to get your targets. As written, the script ***reads your eBird usename and password from the config file stored in plain text on your computer*** and uses these to log into ebird. I've tried to explicitly document where and how your password is used in the code (please take a look).
+Since eBird doesn't provide individual level API access, the script needs to login to your eBird account to get targets. As written, the script ***reads your eBird usename and password from the config file stored in plain text on your computer*** and uses these to log into ebird. I've tried to explicitly document where and how your password is used in the code (please take a look).
   - All lines where your password is read, stored, or used are commented as follow ```#!!!Description of password use!!!```
-  - Your password is read from the cfg file using ```getConfig()```: lines ```5-16```, funtion call line ```250```
-  - Your password is used to login to ebird using ```ebirdLogin()```: lines ```40-61```, function call line ```252```
-  - Your usename and password are deleted from the ```cfg``` variable after data has been collected (lines ```253-254```) so you don't have to look through the rest of the functions.
+  - Your password is read from the config file in ```getConfig()```: line ```72```. Login credentials are extracted from the ```[login-config]``` section on lines ```107-109```. The function is called on line ```650```.
+  - Your password is submitted to eBird in ```ebirdLogin()```: lines ```175``` and ```180```. The function is called on line ```668```.
+  - Your username and password are deleted from the ```lgn``` variable after login succeeds (lines ```671-672```), before hotspot parsing begins.
   - If you're paranoid you should remove the password from ```ebird.cfg``` after running the script.
 
 ## Details
@@ -22,15 +22,15 @@ Since eBird doesn't provide individual level API access, the script needs to log
 - The script parses "eBird lifers", so both "Native & Naturalized" and "Exotic: Provisional" are included in the output.
 - The Excel file contains:
   - A column of species frequencies for each hotspot
-  - A ```Max Freq``` column with the maximum frequency for each species across parsed hotspots
-  - A ```Tax Sort``` column that allows you to easily re-sort taxonomically
+  - A ```MaxFreq``` column with the maximum frequency for each species across parsed hotspots
+  - A ```TaxSort``` column that allows you to easily re-sort taxonomically
 - The color code should be fairly intutive:
   - Grey: < cutoff
   - Red: cutoff - 10%
   - Yellow: 10 - 25%
   - Blue: 25 - 50%
   - Green: >50%
-- The "Study Guide" is just an unformatted html file with a taxonomically sorted list of links to eBird species accounts.
+- The "Study Guide" is a styled HTML file with a taxonomically sorted list of links to eBird and Birds of the World species accounts.
   
 **Some important notes, caveats, and limitations:**
 
@@ -48,32 +48,36 @@ All relevant parameters are passed to the script in a configuration file that mu
 
 ```
 [ebird-config]
-user = YourUserName
-pw = YourPassword
 hotspots = hotspots.txt
-filebase = YourDestination
+filebase = CostaRica
 bmo = 1
-emo = 12
+emo = 1
 reg = world
 list = life
 cutoff = 1.5
 taxonomy = eBird-Clements_v2026_integrated-checklist-October-2026.csv
+taxonomy_sha256 = ca63a4c93fe20f1ea6d073e6ff929c3d1f0b0ed7592839ecfce1ef296237a331
 taxsort = sort v2026
 speccol = English name
+
+[login-config]
+user = YourUserName
+pw = YourPassword
 ```
 
-- ```user = ``` Your eBird username
-- ```pw = ``` Your eBird password
-- ```hotspots = ``` A text file containing eBird hotspot IDs of interest. You can find the hotspot ID in the hotspot's eBird URL. For example the URL for the Mount Auburn Cemetery hotspot is ```https://ebird.org/hotspot/L207391```. The hotspot ID is ```L207391```. See an example file below.
+- ```hotspots = ``` A text file containing eBird hotspot or region IDs of interest. You can find the hotspot ID in the hotspot's eBird URL. For example the URL for the Mount Auburn Cemetery hotspot is ```https://ebird.org/hotspot/L207391```. The hotspot ID is ```L207391```. See an example file below. The URL for Cochise County, Arizona is ```https://ebird.org/region/US-AZ-003```. The rgion ID is ```US-AZ-003```.
 - ```filebase = ``` A prefix for the script's output files. If you're preparing for a trip to Costa Rica you might use a prefix of ```CostaRica```
 - ```bmo = ``` The beginning month of your time period of interest. Acceptable vales are ```1 - 12```
 - ```emo = ``` The ending month of your time period of interest. Acceptable vales are ```1 - 12```
-- ```reg = ``` The region list you want targets for. ```world``` specifies targets for your world list. Other options are the hotspot ID or region ID. 
+- ```reg = ``` The region list you want targets for. ```world``` specifies your world list. Other options are a country (e.g. ```US```), a state/province (e.g. ```US-MA```), or a county (e.g. ```US-MA-017```).
 - ```list = ``` The list you want targets for, options are: ```life```, ```year```, ```month```, ```day```	 
 - ```cutoff = ``` A percent cutoff for filtering data. A cutoff of ```1.5``` means that if a species doesn't have a frequency of >= 1.5% in at least one of the hotspots, it will be filtered from the output data.
-- ```taxonomy = ``` The filename for the current Clements/eBird taxonomy csv file. For example, from Oct 2026 to Oct 2027 this would be ```eBird-Clements_v2026_integrated-checklist-October-2026.csv```.
+- ```taxonomy = ``` The local filename for the Clements/eBird taxonomy CSV. Download the file from the link below and place it in the directory where you run the script.
+- ```taxonomy_sha256 = ``` The expected 64-character SHA-256 checksum for the taxonomy CSV. The script verifies the local file before parsing it. I will keep this updated as the taxonomy is updated.
 - ```taxsort = ``` The column header in the taxonomy csv file that specifies the taxonomic sort order (e.g. ```sort v2026```)
 - ```speccol = ``` The column header in the taxonomy csv file that specifies the species name (e.g. ```English name```)
+- ```user = ``` Your eBird username
+- ```pw = ``` Your eBird password
 
 An example hotspots file from my Costa Rica trip. Each hotspot ID should be on its own line. The  top to bottom order of hotspots specifies the left to right order of columns in the output spreadsheet. I used colum ordering to organize in some way that makes sense for the trip. The file can have any name that you want, as long as it's specified in the ```ebird.cfg``` file:
 ```
@@ -87,7 +91,7 @@ L448041
 ```
 
 ## Updates
-eBird's yearly taxonomy update will require downloading the latest Clements/eBird checklist (and Avibase from 2026 onward) and changing the ```taxonomy``` and ```taxsort``` lines in the cfg file. I won't host these here, but will try to keep these links up to date.
+eBird's yearly taxonomy update will require downloading the latest Clements/eBird checklist and changing the ```taxonomy``` filename, ```taxonomy_sha256```, and ```taxsort``` value in the cfg file (and Avibase from 2026 onward). I won't host these here, but will try to keep these links up to date.
 
 The 2026 taxonomy downloads page, and a direct link to the relevant 2025 taxonomy file are below.
 - [2026 Taxonomy Download Page](https://www.birds.cornell.edu/clementschecklist/introduction/updateindex/october-2025/2026-citation-checklist-downloads/)
@@ -96,9 +100,10 @@ The 2026 taxonomy downloads page, and a direct link to the relevant 2025 taxonom
 Updates to the eBird website will require more significant updates. eBird's 2024 style update required rewriting the code that parses the targets table HTML. Hopefully, the current eBird style will be stable for a few years.
 
 ## Dependencies
-This script requires python3 with pandas, BeautifulSoup, requests, csv, and xlsxwriter. The range of versions I've test are listed below. It's unlikely that this exact configuration is needed, but earlier versions of *some* packages might not work. The included enviroment.yml file can be used to build this conda environment.
-- python3 [3.9.12] - [3.13.5]
-- pandas [1.4.2] - [2.3.1]
-- bs4 [4.11.1] - [4.13.4]
-- requests [2.27.1] - [2.32.4]
-- xlsxwriter [3.0.3] - [3.2.3]
+In addition to Python's standard library, this script requires these third-party packages:
+- pandas
+- beautifulsoup4 (imported as `bs4`)
+- requests
+- XlsxWriter
+
+Install the pinned Python packages with `python -m pip install -r requirements.txt`.
